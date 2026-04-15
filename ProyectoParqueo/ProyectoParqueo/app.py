@@ -21,7 +21,7 @@ def index():
     return redirect(url_for('login'))
 
 # -------------------------------
-# 🔐 LOGIN
+# 🔐 LOGIN (CORREGIDO)
 # -------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -34,7 +34,7 @@ def login():
             cursor = conn.cursor()
 
             query = """
-                SELECT id_usuario, nombre, rol, clave, clave_cambiada
+                SELECT id_usuario, nombre, rol, clave
                 FROM usuarios
                 WHERE correo_electronico = ?
             """
@@ -46,10 +46,6 @@ def login():
                 session['user_name'] = user.nombre
                 session['user_role'] = user.rol
 
-                # 🔴 DESACTIVADO PARA PRUEBAS
-                # if not user.clave_cambiada:
-                #     return redirect(url_for('change_password'))
-
                 return redirect(url_for('dashboard'))
             else:
                 flash('Correo o contraseña incorrectos.', 'danger')
@@ -60,36 +56,7 @@ def login():
     return render_template('login.html')
 
 # -------------------------------
-# 🔑 CAMBIAR CONTRASEÑA
-# -------------------------------
-@app.route('/change_password', methods=['GET', 'POST'])
-def change_password():
-    if request.method == 'POST':
-        nueva_clave = request.form['new_password']
-        user_id = session.get('user_id')
-
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-
-            cursor.execute("""
-                UPDATE usuarios
-                SET clave = ?, clave_cambiada = 1
-                WHERE id_usuario = ?
-            """, (nueva_clave, user_id))
-
-            conn.commit()
-            session.clear()
-            flash('Contraseña cambiada.', 'success')
-            return redirect(url_for('login'))
-
-        except Exception as e:
-            flash(f"Error: {e}", 'danger')
-
-    return render_template('change_password.html')
-
-# -------------------------------
-# 🧭 DASHBOARD (CORREGIDO)
+# 🧭 DASHBOARD
 # -------------------------------
 @app.route('/dashboard')
 def dashboard():
@@ -100,7 +67,7 @@ def dashboard():
         return redirect(url_for('login'))
 
 # -------------------------------
-# 👤 REGISTRAR
+# 👤 REGISTRAR USUARIO (CORREGIDO)
 # -------------------------------
 @app.route('/admin/register', methods=['GET', 'POST'])
 def register_user():
@@ -111,8 +78,8 @@ def register_user():
 
             cursor.execute("""
                 INSERT INTO usuarios
-                (nombre, correo_electronico, fecha_nacimiento, identificacion, numero_carne, clave, clave_cambiada, rol)
-                VALUES (?, ?, ?, ?, ?, 'Ulacit123', 0, ?)
+                (nombre, correo_electronico, fecha_nacimiento, identificacion, numero_carne, rol)
+                VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 request.form['nombre'],
                 request.form['correo'],
@@ -123,13 +90,16 @@ def register_user():
             ))
 
             conn.commit()
-            flash('Usuario registrado.', 'success')
+            flash('Usuario registrado correctamente.', 'success')
+            return redirect(url_for('dashboard'))
 
         except Exception as e:
             flash(f"Error: {e}", 'danger')
 
     return render_template('register_user.html')
 
+# -------------------------------
+# 🚪 LOGOUT
 # -------------------------------
 @app.route('/logout')
 def logout():
