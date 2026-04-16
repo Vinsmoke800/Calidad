@@ -1,67 +1,377 @@
 <!DOCTYPE html>
 <html lang="es">
+ 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+    <title>Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+ 
+        :root {
+            --purple-deep:   #6C3FC5;
+            --purple-mid:    #8B5CF6;
+            --purple-light:  #A78BFA;
+            --purple-pale:   #EDE9FE;
+            --peach:         #FFBB99;
+            --gold:          #F5A623;
+            --white:         #FFFFFF;
+            --gray-text:     #6B7280;
+            --gray-label:    #374151;
+            --gray-border:   #E5E7EB;
+            --shadow:        0 25px 60px rgba(108, 63, 197, 0.18);
+        }
+ 
         body {
-            background-color: #f4f4f4;
+            font-family: 'Sora', sans-serif;
+            background: #594c8b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .login-container {
-            max-width: 400px;
-            margin: 80px auto;
-            padding: 30px;
-            background-color: white;
+ 
+        /* ── Card ── */
+        .card {
+            display: flex;
+            width: 820px;
+            max-width: 100%;
+            min-height: 520px;
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: fadeUp .55s cubic-bezier(.22,.68,0,1.2) both;
+        }
+ 
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+ 
+        /* ── Left panel ── */
+        .panel-left {
+            position: relative;
+            flex: 0 0 42%;
+            background: linear-gradient(145deg, var(--peach) 0%, var(--gold) 30%, var(--purple-mid) 65%, var(--purple-deep) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content:  center;
+            padding: 36px 32px;
+            overflow: hidden;
+        }
+ 
+        /* Blob 1 – translucent purple wave */
+        .panel-left::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -80px;
+            width: 340px;
+            height: 340px;
+            background: rgba(139, 92, 246, 0.55);
+            border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+            animation: morph 8s ease-in-out infinite alternate;
+        }
+ 
+        /* Blob 2 – lighter accent */
+        .panel-left::after {
+            content: '';
+            position: absolute;
+            bottom: 60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(167, 139, 250, 0.4);
+            border-radius: 40% 60% 45% 55% / 60% 40% 60% 40%;
+            animation: morph 10s ease-in-out infinite alternate-reverse;
+        }
+ 
+        @keyframes morph {
+            0%   { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; }
+            50%  { border-radius: 40% 60% 45% 55% / 60% 40% 60% 40%; }
+            100% { border-radius: 55% 45% 60% 40% / 45% 55% 45% 55%; }
+        }
+ 
+        .logo {
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            width: 36px;
+            height: 36px;
+            z-index: 2;
+        }
+ 
+        .logo svg {
+            width: 100%;
+            height: 100%;
+        }
+ 
+        .panel-left h2 {
+            position: relative;
+            z-index: 2;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.18);
+        }
+ 
+        /* ── Right panel ── */
+        .panel-right {
+            flex: 1;
+            padding: 52px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+ 
+        .panel-right h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.4px;
+            margin-bottom: 6px;
+        }
+ 
+        .subtitle {
+            font-size: .84rem;
+            color: var(--gray-text);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+ 
+        /* ── Form ── */
+        .field {
+            margin-bottom: 18px;
+        }
+ 
+        label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--gray-label);
+            margin-bottom: 6px;
+            letter-spacing: .3px;
+        }
+ 
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--gray-border);
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            font-family: 'Sora', sans-serif;
+            font-size: .88rem;
+            color: #111827;
+            background: #FAFAFA;
+            outline: none;
+            transition: border-color .22s, box-shadow .22s, background .22s;
         }
-        h2 {
-            margin-bottom: 20px;
+ 
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--purple-mid);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+            background: var(--white);
+        }
+ 
+        /* ── Remember / Forgot ── */
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+ 
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+        }
+ 
+        .remember input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--purple-mid);
+            border-radius: 4px;
+            background: var(--white);
+            cursor: pointer;
+            transition: background .18s;
+            position: relative;
+        }
+ 
+        .remember input[type="checkbox"]:checked {
+            background: var(--purple-mid);
+        }
+ 
+        .remember input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 4px;
+            width: 5px;
+            height: 9px;
+            border: 2px solid #fff;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg);
+        }
+ 
+        .remember span {
+            font-size: .78rem;
+            color: var(--gray-text);
+        }
+ 
+        .forgot {
+            font-size: .78rem;
+            color: var(--purple-mid);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .18s;
+        }
+ 
+        .forgot:hover { color: var(--purple-deep); }
+ 
+        /* ── Button ── */
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--purple-mid) 0%, var(--purple-deep) 100%);
+            color: var(--white);
+            font-family: 'Sora', sans-serif;
+            font-size: .92rem;
+            font-weight: 600;
+            letter-spacing: .3px;
+            cursor: pointer;
+            transition: opacity .2s, transform .18s, box-shadow .2s;
+            box-shadow: 0 6px 20px rgba(108, 63, 197, 0.35);
+        }
+ 
+        .btn-login:hover {
+            opacity: .92;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 28px rgba(108, 63, 197, 0.42);
+        }
+ 
+        .btn-login:active {
+            transform: translateY(0);
+        }
+ 
+        /* ── Signup link ── */
+        .signup-row {
+            margin-top: 22px;
+            font-size: .82rem;
+            color: var(--gray-text);
             text-align: center;
         }
-        .btn {
-            width: 100%;
+ 
+        .signup-row a {
+            color: var(--purple-mid);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .18s;
+        }
+ 
+        .signup-row a:hover { color: var(--purple-deep); }
+ 
+        /* ── Flash messages ── */
+        .alert {
+            margin-top: 16px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: .82rem;
+        }
+ 
+        .alert-danger  { background: #FEE2E2; color: #B91C1C; }
+        .alert-success { background: var(--purple-pale); color: var(--purple-deep); }
+        .alert-warning { background: #FEF9C3; color: #92400E; }
+ 
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .card { flex-direction: column; }
+            .panel-left {
+                flex: 0 0 160px;
+                padding: 24px;
+            }
+            .panel-left h2 { font-size: 1.8rem; }
+            .panel-right { padding: 32px 28px; }
         }
     </style>
 </head>
+ 
 <body>
-
-<div class="container">
-    <div class="login-container">
-        <h2>Iniciar Sesión</h2>
-
-        <!-- 🔔 Mensajes -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <!-- 🔐 Formulario -->
-        <form method="POST" action="{{ url_for('login') }}">
-            <div class="form-group">
-                <label for="correo">Correo Electrónico</label>
-                <input type="email" class="form-control" name="correo" required>
+    <div class="card">
+ 
+        <!-- ── panel derecho  ── -->
+        <div class="panel-left">
+            <div class="logo">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="20,4 36,32 4,32" fill="none" stroke="white" stroke-width="3.5" stroke-linejoin="round"/>
+                    <polygon points="20,14 29,30 11,30" fill="white" opacity=".55"/>
+                </svg>
             </div>
+            <h2>¡Bienvenido<br>de vuelta a Ulacit Parking!</h2>
+        </div>
+ 
+        <!-- ── panel izquierdo ── -->
+        <div class="panel-right">
+            <h1>Iniciar Sesión</h1>
+            <p class="subtitle">¡Hola! Por favor ingresa a tu cuenta.</p>
+ 
+            <form method="POST" action="{{ url_for('login') }}">
+ 
+                <div class="field">
+                    <label for="correo">Correo electrónico</label>
+                    <input type="email" id="correo" name="correo"
+                           placeholder="usuario@correo.com" required>
+                </div>
+ 
+                <div class="field">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password"
+                           placeholder="••••••••" required>
+                </div>
+ 
+                <div class="meta-row">
+                    <label class="remember">
+                        <input type="checkbox" name="remember">
+                        <span>Recordarme</span>
+                    </label>
+                    <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+                </div>
+ 
+                <button type="submit" class="btn-login">Entrar</button>
+ 
+            </form>
+                
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                 {% if messages %}
+                     {% for category, message in messages %}
+                         <div class="alert alert-{{ category }}">
+                            {{ message }}
+                         </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" class="form-control" name="password" required>
-            </div>
+ 
+            <!-- Flash messages (Jinja2) -->
 
-            <button type="submit" class="btn btn-primary">Ingresar</button>
-        </form>
+ 
     </div>
-</div>
-
 </body>
 </html>

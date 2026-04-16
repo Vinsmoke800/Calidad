@@ -21,7 +21,7 @@ def index():
     return redirect(url_for('login'))
 
 # -------------------------------
-# 🔐 LOGIN (CORREGIDO)
+# 🔐 LOGIN
 # -------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,14 +63,17 @@ def dashboard():
     if 'user_role' in session:
         return render_template('dashboard.html', user_name=session['user_name'])
     else:
-        flash('No tienes permisos.', 'danger')
+        flash('Debes iniciar sesión.', 'danger')
         return redirect(url_for('login'))
 
 # -------------------------------
-# 👤 REGISTRAR USUARIO (CORREGIDO)
+# 👤 REGISTRAR USUARIO
 # -------------------------------
 @app.route('/admin/register', methods=['GET', 'POST'])
 def register_user():
+    if 'user_role' not in session:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         try:
             conn = get_db_connection()
