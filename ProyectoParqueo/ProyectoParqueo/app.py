@@ -31,6 +31,10 @@ def login():
 
         try:
             conn = get_db_connection()
+            if conn is None:
+                flash("No se pudo conectar a la base de datos.", 'danger')
+                return render_template('login.html')
+
             cursor = conn.cursor()
 
             query = """
@@ -45,7 +49,6 @@ def login():
                 session['user_id'] = user.id_usuario
                 session['user_name'] = user.nombre
                 session['user_role'] = user.rol
-
                 return redirect(url_for('dashboard'))
             else:
                 flash('Correo o contraseña incorrectos.', 'danger')
@@ -77,6 +80,10 @@ def register_user():
     if request.method == 'POST':
         try:
             conn = get_db_connection()
+            if conn is None:
+                flash("No se pudo conectar a la base de datos.", 'danger')
+                return render_template('register_user.html')
+
             cursor = conn.cursor()
 
             cursor.execute("""
@@ -111,5 +118,26 @@ def logout():
     return redirect(url_for('login'))
 
 # -------------------------------
+# 👥 LISTA DE USUARIOS (Guarda)
+# -------------------------------
+@app.route('/usuarios')
+def lista_usuarios():
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        flash('Acceso denegado.', 'danger')
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", 'danger')
+        return redirect(url_for('dashboard'))
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT id_usuario, nombre, correo_electronico, identificacion, numero_carne, rol FROM usuarios")
+    usuarios = cursor.fetchall()
+    conn.close()
+
+    return render_template('lista_usuarios.html', usuarios=usuarios)
+# -------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
+    # -------------------------------

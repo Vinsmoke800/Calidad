@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - ULACIT Parking</title>
+    <title>Lista de Usuarios - ULACIT Parking</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
       rel="stylesheet"
@@ -36,7 +36,7 @@
         min-height: 100vh;
       }
 
-      /* ══ DISEÑO/ COLOR DE LA BARRA IZQUIERDA ══ */
+      /* ══ SIDEBAR ══ */
       .sidebar {
         width: var(--sidebar-w);
         min-height: 100vh;
@@ -109,37 +109,6 @@
         letter-spacing: 0.5px;
       }
 
-      .sidebar-user {
-        margin-top: 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--peach), var(--purple-light));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--white);
-        flex-shrink: 0;
-      }
-
-      .user-info small {
-        display: block;
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.5);
-      }
-      .user-info strong {
-        font-size: 0.82rem;
-        color: var(--white);
-      }
-
       nav {
         flex: 1;
         padding: 24px 16px;
@@ -205,7 +174,7 @@
         color: #fca5a5;
       }
 
-      /* ══ MAINN ══ */
+      /* ══ MAIN ══ */
       .main {
         margin-left: var(--sidebar-w);
         flex: 1;
@@ -229,11 +198,6 @@
         font-weight: 700;
         color: #111827;
       }
-      .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
       .badge-admin {
         background: var(--purple-pale);
         color: var(--purple-deep);
@@ -242,18 +206,14 @@
         padding: 4px 10px;
         border-radius: 20px;
       }
-      .date-tag {
-        font-size: 0.78rem;
-        color: var(--gray-text);
-      }
 
       .content {
         padding: 32px 36px;
         flex: 1;
       }
 
-      /*banner de bienvenidos*/
-      .welcome-banner {
+      /* Banner */
+      .page-banner {
         background: linear-gradient(
           100deg,
           var(--purple-deep) 0%,
@@ -270,7 +230,7 @@
         position: relative;
         animation: fadeUp 0.5s ease both;
       }
-      .welcome-banner::after {
+      .page-banner::after {
         content: "";
         position: absolute;
         right: -40px;
@@ -280,13 +240,13 @@
         background: rgba(255, 255, 255, 0.08);
         border-radius: 50%;
       }
-      .welcome-banner h2 {
+      .page-banner h2 {
         font-size: 1.4rem;
         font-weight: 700;
         color: var(--white);
         margin-bottom: 4px;
       }
-      .welcome-banner p {
+      .page-banner p {
         font-size: 0.82rem;
         color: rgba(255, 255, 255, 0.7);
       }
@@ -295,176 +255,153 @@
         z-index: 1;
       }
 
-      .section-title {
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: var(--gray-text);
-        margin-bottom: 14px;
-      }
-
-      /* Two-column layout */
-      .panels-row {
+      /* Stats cards */
+      .stats-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
         animation: fadeUp 0.55s 0.1s ease both;
       }
+      .stat-card {
+        background: var(--white);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+      .stat-icon.purple {
+        background: var(--purple-pale);
+      }
+      .stat-icon.peach {
+        background: #ffe5d6;
+      }
+      .stat-icon.green {
+        background: #d1fae5;
+      }
+      .stat-info small {
+        font-size: 0.72rem;
+        color: var(--gray-text);
+        display: block;
+      }
+      .stat-info strong {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #111827;
+      }
 
-      .info-panel {
+      /* Card de la tabla */
+      .table-card {
         background: var(--white);
         border-radius: 16px;
         padding: 24px;
         box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
+        animation: fadeUp 0.6s 0.15s ease both;
       }
-
-      .info-panel h3 {
-        font-size: 0.92rem;
+      .table-card h3 {
+        font-size: 0.95rem;
         font-weight: 700;
         color: #111827;
         margin-bottom: 16px;
         padding-bottom: 12px;
         border-bottom: 2px solid var(--gray-bg);
-      }
-
-      /* info del sistema */
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #f5f3ff;
-        font-size: 0.82rem;
-      }
-      .info-row:last-child {
-        border-bottom: none;
-      }
-      .info-row .key {
-        color: var(--gray-text);
-      }
-      .info-row .val {
-        font-weight: 600;
-        color: #111827;
-      }
-
-      .pill {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 600;
-      }
-      .pill-green {
-        background: #d1fae5;
-        color: #065f46;
-      }
-      .pill-blue {
-        background: #dbeafe;
-        color: #1d4ed8;
-      }
-      .pill-night {
-        background: #1e1b4b;
-        color: #c4b5fd;
-      }
-
-      /*Turnos*/
-      .shift-block {
-        margin-bottom: 14px;
-      }
-      .shift-block:last-child {
-        margin-bottom: 0;
-      }
-
-      .shift-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .shift-badge {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-      }
-      .shift-badge.day {
-        background: #fef9c3;
-        color: #92400e;
-      }
-      .shift-badge.eve {
-        background: #fde8d8;
-        color: #9a3412;
-      }
-      .shift-badge.night {
-        background: #1e1b4b;
-        color: #c4b5fd;
-      }
-
-      .shift-hours {
-        font-size: 0.75rem;
-        color: var(--gray-text);
-      }
-
-      .shift-divider {
-        height: 1px;
-        background: var(--gray-bg);
-        margin: 14px 0;
-      }
-
-      .staff-list {
-        display: flex;
-        flex-direction: column;
         gap: 8px;
       }
 
-      .staff-item {
+      /* Tabla */
+      .users-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .users-table thead th {
+        background: var(--gray-bg);
+        color: var(--purple-deep);
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .users-table thead th:first-child {
+        border-radius: 10px 0 0 10px;
+      }
+      .users-table thead th:last-child {
+        border-radius: 0 10px 10px 0;
+      }
+
+      .users-table tbody td {
+        padding: 14px;
+        border-bottom: 1px solid #f5f3ff;
+        font-size: 0.85rem;
+        color: #111827;
+      }
+      .users-table tbody tr {
+        transition: background 0.2s;
+      }
+      .users-table tbody tr:hover {
+        background: #faf7ff;
+      }
+      .users-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Avatar en tabla */
+      .user-cell {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 9px 12px;
-        background: var(--gray-bg);
-        border-radius: 10px;
       }
-
-      .staff-avatar {
-        width: 32px;
-        height: 32px;
+      .user-avatar {
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
+        background: linear-gradient(135deg, var(--peach), var(--purple-light));
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.78rem;
+        font-size: 0.8rem;
         font-weight: 700;
         color: var(--white);
         flex-shrink: 0;
       }
-      .av-day {
-        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+
+      .pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
       }
-      .av-eve {
-        background: linear-gradient(135deg, #f97316, #fb923c);
+      .pill-admin {
+        background: var(--purple-pale);
+        color: var(--purple-deep);
       }
-      .av-night {
-        background: linear-gradient(135deg, #4c1d95, #7c3aed);
+      .pill-usuario {
+        background: #dbeafe;
+        color: #1d4ed8;
       }
 
-      .staff-name {
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #111827;
-      }
-      .staff-role {
-        font-size: 0.7rem;
+      .empty-msg {
+        text-align: center;
+        padding: 40px;
         color: var(--gray-text);
-      }
-      .staff-info {
-        flex: 1;
+        font-size: 0.9rem;
       }
 
       @keyframes fadeUp {
@@ -484,14 +421,13 @@
         }
         .brand-name,
         .nav-link span,
-        .user-info,
         .nav-label {
           display: none;
         }
         .main {
           margin-left: 70px;
         }
-        .panels-row {
+        .stats-row {
           grid-template-columns: 1fr;
         }
         .content {
@@ -500,12 +436,15 @@
         .topbar {
           padding: 14px 20px;
         }
+        .users-table {
+          font-size: 0.75rem;
+        }
       }
     </style>
   </head>
 
   <body>
-    <!-- ══ Barra Izquierda ══ -->
+    <!-- ══ SIDEBAR ══ -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="brand">
@@ -542,7 +481,7 @@
       <nav>
         <div class="nav-label">Menú principal</div>
 
-        <a href="{{ url_for('dashboard') }}" class="nav-link active">
+        <a href="{{ url_for('dashboard') }}" class="nav-link">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -576,7 +515,22 @@
           <span>Registrar Nuevo Usuario</span>
         </a>
 
-        <a href="{{ url_for('lista_usuarios') }}">Ver Lista de Usuarios</a>
+        <a href="{{ url_for('lista_usuarios') }}" class="nav-link active">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Lista de Usuarios</span>
+        </a>
 
         <div style="flex: 1"></div>
 
@@ -601,142 +555,94 @@
     <!-- ══ MAIN ══ -->
     <div class="main">
       <div class="topbar">
-        <h1>Administración</h1>
-        <div class="topbar-right">
-          <span class="badge-admin">Admin</span>
-        </div>
+        <h1>Lista de Usuarios</h1>
+        <span class="badge-admin">Admin</span>
       </div>
 
       <div class="content">
-        <!-- BIENVENIDA -->
-        <div class="welcome-banner">
+        <!-- Banner -->
+        <div class="page-banner">
           <div>
-            <h2>¡Bienvenido, a ULACIT Parking!</h2>
-            <p>
-              Aquí tienes la información del sistema y los turnos asignados para
-              hoy.
-            </p>
+            <h2>👥 Usuarios Registrados</h2>
+            <p>Consulta la información de todos los usuarios del sistema.</p>
+          </div>
+          <div class="banner-icon">📋</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon purple">👤</div>
+            <div class="stat-info">
+              <small>Total Usuarios</small>
+              <strong>{{ usuarios|length }}</strong>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon peach">🛡️</div>
+            <div class="stat-info">
+              <small>Administradores</small>
+              <strong
+                >{{ usuarios|selectattr('rol', 'equalto',
+                'Administrador')|list|length }}</strong
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">🎓</div>
+            <div class="stat-info">
+              <small>Usuarios estándar</small>
+              <strong
+                >{{ usuarios|selectattr('rol', 'equalto', 'Usuario')|list|length
+                }}</strong
+              >
+            </div>
           </div>
         </div>
 
-        <div class="section-title">Información General</div>
-        <div class="panels-row">
-          <!-- Panel izquierdo: info del sistema -->
-          <div class="info-panel">
-            <h3>🏫 Información del Sistema</h3>
+        <!-- Tabla -->
+        <div class="table-card">
+          <h3>📑 Detalle de Usuarios</h3>
 
-            <div class="info-row">
-              <span class="key">Institución</span>
-              <span class="val">ULACIT</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Sistema</span>
-              <span class="val">ULACIT Parking v1.0</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Ubicación</span>
-              <span class="val">Edificio Principal, ULACIT</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Capacidad total</span>
-              <span class="val">120 espacios</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Espacios para discapacitados</span>
-              <span class="val">6 espacios</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Horario de operación</span>
-              <span class="val">6:00 AM – 10:00 PM</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Teléfono de soporte</span>
-              <span class="val">+506 2436-6000</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Correo de soporte</span>
-              <span class="val">parking@ulacit.ac.cr</span>
-            </div>
-          </div>
-
-          <!-- Panel derecho: turnos de hoy -->
-          <div class="info-panel">
-            <h3>🕐 Turnos de Hoy</h3>
-
-            <!-- Turno Diurno -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge day">☀️ Turno Diurno</span>
-                <span class="shift-hours">6:00 AM – 2:00 PM</span>
-              </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-day">CR</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Genesis Arias</div>
-                    <div class="staff-role">Encargado</div>
+          {% if usuarios %}
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Identificación</th>
+                <th>N° Carné</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in usuarios %}
+              <tr>
+                <td>{{ u.id_usuario }}</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar">{{ u.nombre[0]|upper }}</div>
+                    <span>{{ u.nombre }}</span>
                   </div>
-                  <span class="pill pill-blue">Principal</span>
-                </div>
-                <div class="staff-item">
-                  <div class="staff-avatar av-day">LM</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Amado Arnesen</div>
-                    <div class="staff-role">Segundo</div>
-                  </div>
-                  <span class="pill pill-blue">Apoyo</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="shift-divider"></div>
-
-            <!-- Turno Vespertino -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge eve">🌤️ Turno Vespertino</span>
-                <span class="shift-hours">2:00 PM – 6:00 PM</span>
-              </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-eve">AV</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Gabriel Ruiz</div>
-                    <div class="staff-role">Encargado</div>
-                  </div>
-                  <span class="pill pill-blue">Principal</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="shift-divider"></div>
-
-            <!-- Turno Nocturno -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge night">🌙 Turno Nocturno</span>
-                <span class="shift-hours">6:00 PM – 10:00 PM</span>
-              </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-night">MJ</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Kir Feng</div>
-                    <div class="staff-role">Encargado</div>
-                  </div>
-                  <span class="pill pill-night">Principal</span>
-                </div>
-                <div class="staff-item">
-                  <div class="staff-avatar av-night">DS</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Juan Castro</div>
-                    <div class="staff-role">Segundo</div>
-                  </div>
-                  <span class="pill pill-night">Apoyo</span>
-                </div>
-              </div>
-            </div>
-          </div>
+                </td>
+                <td>{{ u.correo_electronico }}</td>
+                <td>{{ u.identificacion }}</td>
+                <td>{{ u.numero_carne }}</td>
+                <td>
+                  <span
+                    class="pill {% if u.rol == 'Administrador' %}pill-admin{% else %}pill-usuario{% endif %}"
+                  >
+                    {{ u.rol }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-msg">No hay usuarios registrados aún.</div>
+          {% endif %}
         </div>
       </div>
     </div>
