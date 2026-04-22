@@ -195,6 +195,74 @@ def lista_vehiculos():
         parqueos=parqueos
     )
 
+# -------------------------------
+# 🚗 Detalle VEHÍCULOS / PARQUEOS
+# -------------------------------
+
+@app.route('/detalle_vehiculo/<int:id_espacio>', methods=['GET', 'POST'])
+def detalle_vehiculo(id_espacio):
+    if 'user_role' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Si presiona liberar
+    if request.method == 'POST':
+        try:
+            cursor.execute("""
+                UPDATE espacios
+                SET id_vehiculo = NULL
+                WHERE id_espacio = ?
+            """, (id_espacio,))
+
+            conn.commit()
+            flash('Espacio liberado correctamente.', 'success')
+            return redirect(url_for('lista_vehiculos'))
+
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error al liberar espacio: {e}', 'danger')
+
+    # Obtener información completa
+    cursor.execute("""
+        SELECT
+            e.id_espacio,
+            e.numero_espacio,
+            p.nombre AS nombre_parqueo,
+            v.id_vehiculo,
+            v.marca,
+            v.color,
+            v.numero_placa,
+            v.tipo,
+            u.nombre AS nombre_usuario,
+            u.identificacion,
+            u.numero_carne,
+            u.correo_electronico
+        FROM espacios e
+        INNER JOIN parqueos p
+            ON e.id_parqueo = p.id_parqueo
+        INNER JOIN vehiculos v
+            ON e.id_vehiculo = v.id_vehiculo
+        INNER JOIN usuarios u
+            ON v.id_usuario = u.id_usuario
+        WHERE e.id_espacio = ?
+    """, (id_espacio,))
+
+    detalle = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not detalle:
+        flash('Ese espacio no tiene vehículo asignado.', 'danger')
+        return redirect(url_for('lista_vehiculos'))
+
+    return render_template(
+        'detalle_vehiculo.html',
+        detalle=detalle
+    )
+
 
 # -------------------------------
 # 🚗 ASIGNAR VEHÍCULO A ESPACIO

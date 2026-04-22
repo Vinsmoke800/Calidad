@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lista de Vehículos - ULACIT Parking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del Vehículo - ULACIT Parking</title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
@@ -24,6 +24,7 @@
       --purple-pale: #ede9fe;
       --white: #ffffff;
       --gray-bg: #f3f0ff;
+      --gray-text: #6b7280;
       --sidebar-w: 260px;
     }
 
@@ -44,8 +45,8 @@
         #2d1a6e 100%
       );
       position: fixed;
-      left: 0;
       top: 0;
+      left: 0;
       padding: 30px 20px;
       color: white;
     }
@@ -104,47 +105,63 @@
       color: white;
     }
 
-    .parqueo-card {
+    .detail-card {
       background: white;
       border-radius: 16px;
-      padding: 24px;
+      padding: 28px;
       margin-bottom: 24px;
       box-shadow: 0 2px 12px rgba(108,63,197,0.07);
     }
 
-    .parqueo-card h3 {
-      margin-bottom: 20px;
+    .detail-card h2 {
+      margin-bottom: 18px;
+      color: #111827;
+      font-size: 1.1rem;
+      border-bottom: 2px solid #f3f0ff;
+      padding-bottom: 10px;
     }
 
-    .espacios {
-      display: grid;
-      grid-template-columns: repeat(5, 70px);
-      gap: 12px;
+    .info-row {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: #374151;
     }
 
-    .espacio {
-      width: 70px;
-      height: 70px;
-      border-radius: 12px;
+    .info-row strong {
+      color: #111827;
+    }
+
+    .actions {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      text-decoration: none;
+      gap: 14px;
+      margin-top: 20px;
     }
 
-    .disponible {
-      background: #16a34a;
-    }
-
-    .ocupado {
+    button {
       background: #dc2626;
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
     }
 
-    .ocupado:hover {
-      transform: scale(1.03);
+    button:hover {
+      opacity: 0.95;
+    }
+
+    .btn-back {
+      background: var(--purple-deep);
+      color: white;
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
     }
   </style>
 </head>
@@ -178,42 +195,48 @@
 
   <div class="main">
     <div class="topbar">
-      <h1>Lista de Vehículos</h1>
+      <h1>Detalle del Vehículo</h1>
     </div>
 
     <div class="content">
 
       <div class="page-banner">
-        <h2>🚗 Parqueos y Espacios</h2>
-        <p>Consulta los espacios disponibles y ocupados.</p>
+        <h2>🚘 Información Completa del Vehículo</h2>
+        <p>Consulta los datos del usuario, vehículo y espacio asignado.</p>
       </div>
 
-      {% for parqueo in parqueos %}
-      <div class="parqueo-card">
-        <h3>{{ parqueo.nombre }}</h3>
+      <div class="detail-card">
+        <h2>Información del Espacio</h2>
+        <div class="info-row"><strong>Parqueo:</strong> {{ detalle.nombre_parqueo }}</div>
+        <div class="info-row"><strong>Espacio:</strong> #{{ detalle.numero_espacio }}</div>
+      </div>
 
-        <div class="espacios">
+      <div class="detail-card">
+        <h2>Información del Usuario</h2>
+        <div class="info-row"><strong>Nombre:</strong> {{ detalle.nombre_usuario }}</div>
+        <div class="info-row"><strong>Correo:</strong> {{ detalle.correo_electronico }}</div>
+        <div class="info-row"><strong>Identificación:</strong> {{ detalle.identificacion }}</div>
+        <div class="info-row"><strong>Carné:</strong> {{ detalle.numero_carne }}</div>
+      </div>
 
-          {% for espacio in parqueo.espacios %}
+      <div class="detail-card">
+        <h2>Información del Vehículo</h2>
+        <div class="info-row"><strong>ID Vehículo:</strong> {{ detalle.id_vehiculo }}</div>
+        <div class="info-row"><strong>Marca:</strong> {{ detalle.marca }}</div>
+        <div class="info-row"><strong>Color:</strong> {{ detalle.color }}</div>
+        <div class="info-row"><strong>Placa:</strong> {{ detalle.numero_placa }}</div>
+        <div class="info-row"><strong>Tipo:</strong> {{ detalle.tipo }}</div>
 
-            {% if espacio.id_vehiculo %}
-              <a
-                href="{{ url_for('detalle_vehiculo', id_espacio=espacio.id_espacio) }}"
-                class="espacio ocupado"
-              >
-                {{ espacio.numero_espacio }}
-              </a>
-            {% else %}
-              <div class="espacio disponible">
-                {{ espacio.numero_espacio }}
-              </div>
-            {% endif %}
+        <div class="actions">
+          <form method="POST">
+            <button type="submit">Liberar Espacio</button>
+          </form>
 
-          {% endfor %}
-
+          <a href="{{ url_for('lista_vehiculos') }}" class="btn-back">
+            Volver
+          </a>
         </div>
       </div>
-      {% endfor %}
 
     </div>
   </div>
