@@ -118,6 +118,14 @@ def logout():
     return redirect(url_for('login'))
 
 # -------------------------------
+# 👥 LISTA DE vehiculos (Guarda)
+# -------------------------------
+
+@app.route('/lista_vehiculos')
+def lista_vehiculos():
+    return render_template('lista_vehiculos.html')
+
+# -------------------------------
 # 👥 LISTA DE USUARIOS (Guarda)
 # -------------------------------
 @app.route('/usuarios')

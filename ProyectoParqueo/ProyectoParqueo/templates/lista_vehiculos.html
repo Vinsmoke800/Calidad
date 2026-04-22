@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULACIT Parking</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #5f4b8b, #7a5cff);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        button{
+            background: #6c4cff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .parqueos{
+            display: none;
+        }
+
+        .detalle{
+            display: none;
+            margin-top: 15px;
+        }
+
+        .espacios{
+            display: grid;
+            grid-template-columns: repeat(5,60px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .espacio{
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /*estados*/
+        .disponible{
+            background-color: green;
+        }
+
+        .ocupados{
+            background-color: red;
+            cursor: not-allowed;
+        }
+
+        .seleccionado{
+            border: 3px yellow;
+
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>ULACIT Parking</h1>
+        <button onclick="mostrarparqueos()">Ver Parqueos</button>
+
+        <div id="listadeparqueos" class="parqueos">
+            <h2>Parqueos</h2>
+            <button onclick="mostrardetalle(1)">Parqueo 1</button>
+            <div id="detalle1" class="detalle"></div>
+            <button onclick="mostrardetalle(2)">Parqueo 2</button>
+            <div id="detalle2" class="detalle"></div>
+            <button onclick="mostrardetalle(3)">Parqueo 3</button>
+            <div id="detalle3" class="detalle"></div>
+            <button onclick="mostrardetalle(4)">Parqueo 4</button>
+            <div id="detalle4" class="detalle"></div>
+            <button onclick="mostrardetalle(5)">Parqueo 5</button>
+            <div id="detalle5" class="detalle"></div>
+        </div>
+    </div>
+
+    <script>
+    function mostrarParqueos() {
+        document.getElementById("listaParqueos").style.display = "block";
+    }
+
+    function mostrarDetalle(num) {
+        let contenedor = document.getElementById("detalle" + num);
+        contenedor.innerHTML = "";
+
+        let grid = document.createElement("div");
+        grid.className = "espacios";
+
+        for (let i = 1; i <= 20; i++) {
+            let espacio = document.createElement("div");
+            espacio.classList.add("espacio");
+
+            let disponible = Math.random() > 0.4;
+
+            if (disponible) {
+                espacio.classList.add("disponible");
+                espacio.innerText = i;
+
+                espacio.onclick = function () {
+                    // Quitar selección previa
+                    document.querySelectorAll(".seleccionado").forEach(e => {
+                        e.classList.remove("seleccionado");
+                    });
+
+                    espacio.classList.add("seleccionado");
+                    alert("Seleccionaste el espacio " + i);
+                };
+
+            } else {
+                espacio.classList.add("ocupado");
+                espacio.innerText = "X";
+            }
+
+            grid.appendChild(espacio);
+        }
+
+        contenedor.appendChild(grid);
+        contenedor.style.display = "block";
+    }
+</script>
+</body>
+</html>

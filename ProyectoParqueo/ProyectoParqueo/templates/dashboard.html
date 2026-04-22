@@ -1,744 +1,751 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - ULACIT Parking</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
 
-      :root {
-        --purple-deep: #6c3fc5;
-        --purple-mid: #8b5cf6;
-        --purple-light: #a78bfa;
-        --purple-pale: #ede9fe;
-        --peach: #ffbb99;
-        --white: #ffffff;
-        --gray-bg: #f3f0ff;
-        --gray-text: #6b7280;
-        --sidebar-w: 260px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - ULACIT Parking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      body {
-        font-family: "Sora", sans-serif;
-        background: var(--gray-bg);
-        display: flex;
-        min-height: 100vh;
-      }
+    :root {
+      --purple-deep: #6c3fc5;
+      --purple-mid: #8b5cf6;
+      --purple-light: #a78bfa;
+      --purple-pale: #ede9fe;
+      --peach: #ffbb99;
+      --white: #ffffff;
+      --gray-bg: #f3f0ff;
+      --gray-text: #6b7280;
+      --sidebar-w: 260px;
+    }
 
-      /* ══ DISEÑO/ COLOR DE LA BARRA IZQUIERDA ══ */
-      .sidebar {
-        width: var(--sidebar-w);
-        min-height: 100vh;
-        background: linear-gradient(
-          175deg,
+    body {
+      font-family: "Sora", sans-serif;
+      background: var(--gray-bg);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ══ DISEÑO/ COLOR DE LA BARRA IZQUIERDA ══ */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(175deg,
           var(--purple-deep) 0%,
           #7927af 60%,
-          #2d1a6e 100%
-        );
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        box-shadow: 4px 0 24px rgba(108, 63, 197, 0.18);
-        overflow: hidden;
+          #2d1a6e 100%);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(108, 63, 197, 0.18);
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 220px;
+      height: 220px;
+      background: rgba(167, 139, 250, 0.18);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .sidebar-header {
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid rgba(230, 224, 224, 0.904);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .brand-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .brand-name span {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-user {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--peach), var(--purple-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .user-info small {
+      display: block;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .user-info strong {
+      font-size: 0.82rem;
+      color: var(--white);
+    }
+
+    nav {
+      flex: 1;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      padding: 0 10px;
+      margin: 12px 0 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      transition:
+        background 0.2s,
+        color 0.2s;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .nav-link.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      background: var(--peach);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .nav-link svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-link.logout {
+      color: rgba(255, 120, 120, 0.8);
+    }
+
+    .nav-link.logout:hover {
+      background: rgba(255, 80, 80, 0.12);
+      color: #fca5a5;
+    }
+
+    /* ══ MAINN ══ */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--white);
+      padding: 18px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-admin {
+      background: var(--purple-pale);
+      color: var(--purple-deep);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .date-tag {
+      font-size: 0.78rem;
+      color: var(--gray-text);
+    }
+
+    .content {
+      padding: 32px 36px;
+      flex: 1;
+    }
+
+    /*banner de bienvenidos*/
+    .welcome-banner {
+      background: linear-gradient(100deg,
+          var(--purple-deep) 0%,
+          var(--purple-mid) 60%,
+          var(--purple-light) 100%);
+      border-radius: 18px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .welcome-banner::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .welcome-banner h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .welcome-banner p {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .banner-icon {
+      font-size: 3rem;
+      z-index: 1;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-text);
+      margin-bottom: 14px;
+    }
+
+    /* Two-column layout */
+    .panels-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      animation: fadeUp 0.55s 0.1s ease both;
+    }
+
+    .info-panel {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
+    }
+
+    .info-panel h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-bg);
+    }
+
+    /* info del sistema */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f3ff;
+      font-size: 0.82rem;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row .key {
+      color: var(--gray-text);
+    }
+
+    .info-row .val {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .pill-green {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .pill-blue {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .pill-night {
+      background: #1e1b4b;
+      color: #c4b5fd;
+    }
+
+    /*Turnos*/
+    .shift-block {
+      margin-bottom: 14px;
+    }
+
+    .shift-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .shift-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .shift-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .shift-badge.day {
+      background: #fef9c3;
+      color: #92400e;
+    }
+
+    .shift-badge.eve {
+      background: #fde8d8;
+      color: #9a3412;
+    }
+
+    .shift-badge.night {
+      background: #1e1b4b;
+      color: #c4b5fd;
+    }
+
+    .shift-hours {
+      font-size: 0.75rem;
+      color: var(--gray-text);
+    }
+
+    .shift-divider {
+      height: 1px;
+      background: var(--gray-bg);
+      margin: 14px 0;
+    }
+
+    .staff-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .staff-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: var(--gray-bg);
+      border-radius: 10px;
+    }
+
+    .staff-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .av-day {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    .av-eve {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+    }
+
+    .av-night {
+      background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    }
+
+    .staff-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .staff-role {
+      font-size: 0.7rem;
+      color: var(--gray-text);
+    }
+
+    .staff-info {
+      flex: 1;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
       }
 
-      .sidebar::before {
-        content: "";
-        position: absolute;
-        top: -80px;
-        right: -80px;
-        width: 220px;
-        height: 220px;
-        background: rgba(167, 139, 250, 0.18);
-        border-radius: 50%;
-        pointer-events: none;
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
       }
 
-      .sidebar-header {
-        padding: 32px 24px 28px;
-        border-bottom: 1px solid rgba(230, 224, 224, 0.904);
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 6px;
-      }
-
-      .brand-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .brand-icon svg {
-        width: 22px;
-        height: 22px;
-      }
-
-      .brand-name {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--white);
-        line-height: 1.2;
-      }
-      .brand-name span {
-        display: block;
-        font-size: 0.72rem;
-        font-weight: 400;
-        color: rgba(255, 255, 255, 0.55);
-        letter-spacing: 0.5px;
-      }
-
-      .sidebar-user {
-        margin-top: 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--peach), var(--purple-light));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--white);
-        flex-shrink: 0;
-      }
-
-      .user-info small {
-        display: block;
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.5);
-      }
-      .user-info strong {
-        font-size: 0.82rem;
-        color: var(--white);
-      }
-
-      nav {
-        flex: 1;
-        padding: 24px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
+      .brand-name,
+      .nav-link span,
+      .user-info,
       .nav-label {
-        font-size: 0.65rem;
-        font-weight: 600;
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.35);
-        padding: 0 10px;
-        margin: 12px 0 6px;
+        display: none;
       }
 
-      .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 11px 14px;
-        border-radius: 10px;
-        color: rgba(255, 255, 255, 0.75);
-        text-decoration: none;
-        font-size: 0.86rem;
-        font-weight: 500;
-        transition:
-          background 0.2s,
-          color 0.2s;
-        position: relative;
-      }
-      .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--white);
-      }
-      .nav-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: var(--white);
-        font-weight: 600;
-      }
-      .nav-link.active::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 20%;
-        bottom: 20%;
-        width: 3px;
-        background: var(--peach);
-        border-radius: 0 4px 4px 0;
-      }
-      .nav-link svg {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-      }
-      .nav-link.logout {
-        color: rgba(255, 120, 120, 0.8);
-      }
-      .nav-link.logout:hover {
-        background: rgba(255, 80, 80, 0.12);
-        color: #fca5a5;
-      }
-
-      /* ══ MAINN ══ */
       .main {
-        margin-left: var(--sidebar-w);
-        flex: 1;
-        display: flex;
-        flex-direction: column;
+        margin-left: 70px;
       }
 
-      .topbar {
-        background: var(--white);
-        padding: 18px 36px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
-        position: sticky;
-        top: 0;
-        z-index: 50;
-      }
-      .topbar h1 {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #111827;
-      }
-      .topbar-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .badge-admin {
-        background: var(--purple-pale);
-        color: var(--purple-deep);
-        font-size: 0.72rem;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 20px;
-      }
-      .date-tag {
-        font-size: 0.78rem;
-        color: var(--gray-text);
+      .panels-row {
+        grid-template-columns: 1fr;
       }
 
       .content {
-        padding: 32px 36px;
-        flex: 1;
+        padding: 20px 16px;
       }
 
-      /*banner de bienvenidos*/
-      .welcome-banner {
-        background: linear-gradient(
-          100deg,
-          var(--purple-deep) 0%,
-          var(--purple-mid) 60%,
-          var(--purple-light) 100%
-        );
-        border-radius: 18px;
-        padding: 28px 32px;
-        margin-bottom: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        overflow: hidden;
-        position: relative;
-        animation: fadeUp 0.5s ease both;
+      .topbar {
+        padding: 14px 20px;
       }
-      .welcome-banner::after {
-        content: "";
-        position: absolute;
-        right: -40px;
-        top: -40px;
-        width: 180px;
-        height: 180px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 50%;
-      }
-      .welcome-banner h2 {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--white);
-        margin-bottom: 4px;
-      }
-      .welcome-banner p {
-        font-size: 0.82rem;
-        color: rgba(255, 255, 255, 0.7);
-      }
-      .banner-icon {
-        font-size: 3rem;
-        z-index: 1;
-      }
+    }
+  </style>
+</head>
 
-      .section-title {
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: var(--gray-text);
-        margin-bottom: 14px;
-      }
+<body>
+  <!-- ══ Barra Izquierda ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="4" fill="rgba(255,255,255,0.2)" />
+            <path d="M9 17V7h4.5a3 3 0 0 1 0 6H9" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="brand-name">
+          ULACIT
+          <span> ULACIT Parking</span>
+        </div>
+      </div>
+    </div>
 
-      /* Two-column layout */
-      .panels-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        animation: fadeUp 0.55s 0.1s ease both;
-      }
+    <nav>
+      <div class="nav-label">Menú principal</div>
 
-      .info-panel {
-        background: var(--white);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 2px 12px rgba(108, 63, 197, 0.07);
-      }
+      <a href="{{ url_for('dashboard') }}" class="nav-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>
+        <span>Dashboard</span>
+      </a>
 
-      .info-panel h3 {
-        font-size: 0.92rem;
-        font-weight: 700;
-        color: #111827;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid var(--gray-bg);
-      }
+      <a href="{{ url_for('register_user') }}" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <line x1="19" y1="8" x2="19" y2="14" />
+          <line x1="22" y1="11" x2="16" y2="11" />
+        </svg>
+        <span>Registrar Nuevo Usuario</span>
+      </a>
 
-      /* info del sistema */
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #f5f3ff;
-        font-size: 0.82rem;
-      }
-      .info-row:last-child {
-        border-bottom: none;
-      }
-      .info-row .key {
-        color: var(--gray-text);
-      }
-      .info-row .val {
-        font-weight: 600;
-        color: #111827;
-      }
+      <a href="{{ url_for('lista_usuarios') }}">Ver Lista de Usuarios</a>
 
-      .pill {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 600;
-      }
-      .pill-green {
-        background: #d1fae5;
-        color: #065f46;
-      }
-      .pill-blue {
-        background: #dbeafe;
-        color: #1d4ed8;
-      }
-      .pill-night {
-        background: #1e1b4b;
-        color: #c4b5fd;
-      }
+      <a href="{{ url_for('lista_vehiculos') }}" class="nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="5" rx="2"></rect>
+          <circle cx="7.5" cy="16.5" r="1.5"></circle>
+          <circle cx="16.5" cy="16.5" r="1.5"></circle>
+          <path d="M5 11l2-4h10l2 4"></path>
+        </svg>
+        <span>Lista de Vehículos</span>
+      </a>
+      <div style="flex: 1"></div>
 
-      /*Turnos*/
-      .shift-block {
-        margin-bottom: 14px;
-      }
-      .shift-block:last-child {
-        margin-bottom: 0;
-      }
+      <a href="{{ url_for('logout') }}" class="nav-link logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1" />
+        </svg>
+        <span>Cerrar Sesión</span>
+      </a>
+    </nav>
+  </aside>
 
-      .shift-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
+  <!-- ══ MAIN ══ -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Administración</h1>
+      <div class="topbar-right">
+        <span class="badge-admin">Admin</span>
+      </div>
+    </div>
 
-      .shift-badge {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-      }
-      .shift-badge.day {
-        background: #fef9c3;
-        color: #92400e;
-      }
-      .shift-badge.eve {
-        background: #fde8d8;
-        color: #9a3412;
-      }
-      .shift-badge.night {
-        background: #1e1b4b;
-        color: #c4b5fd;
-      }
-
-      .shift-hours {
-        font-size: 0.75rem;
-        color: var(--gray-text);
-      }
-
-      .shift-divider {
-        height: 1px;
-        background: var(--gray-bg);
-        margin: 14px 0;
-      }
-
-      .staff-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .staff-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 12px;
-        background: var(--gray-bg);
-        border-radius: 10px;
-      }
-
-      .staff-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.78rem;
-        font-weight: 700;
-        color: var(--white);
-        flex-shrink: 0;
-      }
-      .av-day {
-        background: linear-gradient(135deg, #f59e0b, #fbbf24);
-      }
-      .av-eve {
-        background: linear-gradient(135deg, #f97316, #fb923c);
-      }
-      .av-night {
-        background: linear-gradient(135deg, #4c1d95, #7c3aed);
-      }
-
-      .staff-name {
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #111827;
-      }
-      .staff-role {
-        font-size: 0.7rem;
-        color: var(--gray-text);
-      }
-      .staff-info {
-        flex: 1;
-      }
-
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @media (max-width: 768px) {
-        .sidebar {
-          width: 70px;
-        }
-        .brand-name,
-        .nav-link span,
-        .user-info,
-        .nav-label {
-          display: none;
-        }
-        .main {
-          margin-left: 70px;
-        }
-        .panels-row {
-          grid-template-columns: 1fr;
-        }
-        .content {
-          padding: 20px 16px;
-        }
-        .topbar {
-          padding: 14px 20px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- ══ Barra Izquierda ══ -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="brand">
-          <div class="brand-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="4"
-                fill="rgba(255,255,255,0.2)"
-              />
-              <path
-                d="M9 17V7h4.5a3 3 0 0 1 0 6H9"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <div class="brand-name">
-            ULACIT
-            <span> ULACIT Parking</span>
-          </div>
+    <div class="content">
+      <!-- BIENVENIDA -->
+      <div class="welcome-banner">
+        <div>
+          <h2>¡Bienvenido, a ULACIT Parking!</h2>
+          <p>
+            Aquí tienes la información del sistema y los turnos asignados para
+            hoy.
+          </p>
         </div>
       </div>
 
-      <nav>
-        <div class="nav-label">Menú principal</div>
+      <div class="section-title">Información General</div>
+      <div class="panels-row">
+        <!-- Panel izquierdo: info del sistema -->
+        <div class="info-panel">
+          <h3>🏫 Información del Sistema</h3>
 
-        <a href="{{ url_for('dashboard') }}" class="nav-link active">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-          </svg>
-          <span>Dashboard</span>
-        </a>
-
-        <a href="{{ url_for('register_user') }}" class="nav-link">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <line x1="19" y1="8" x2="19" y2="14" />
-            <line x1="22" y1="11" x2="16" y2="11" />
-          </svg>
-          <span>Registrar Nuevo Usuario</span>
-        </a>
-
-        <a href="{{ url_for('lista_usuarios') }}">Ver Lista de Usuarios</a>
-
-        <div style="flex: 1"></div>
-
-        <a href="{{ url_for('logout') }}" class="nav-link logout">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1"
-            />
-          </svg>
-          <span>Cerrar Sesión</span>
-        </a>
-      </nav>
-    </aside>
-
-    <!-- ══ MAIN ══ -->
-    <div class="main">
-      <div class="topbar">
-        <h1>Administración</h1>
-        <div class="topbar-right">
-          <span class="badge-admin">Admin</span>
-        </div>
-      </div>
-
-      <div class="content">
-        <!-- BIENVENIDA -->
-        <div class="welcome-banner">
-          <div>
-            <h2>¡Bienvenido, a ULACIT Parking!</h2>
-            <p>
-              Aquí tienes la información del sistema y los turnos asignados para
-              hoy.
-            </p>
+          <div class="info-row">
+            <span class="key">Institución</span>
+            <span class="val">ULACIT</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Sistema</span>
+            <span class="val">ULACIT Parking v1.0</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Ubicación</span>
+            <span class="val">Edificio Principal, ULACIT</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Capacidad total</span>
+            <span class="val">120 espacios</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Espacios para discapacitados</span>
+            <span class="val">6 espacios</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Horario de operación</span>
+            <span class="val">6:00 AM – 10:00 PM</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Teléfono de soporte</span>
+            <span class="val">+506 2436-6000</span>
+          </div>
+          <div class="info-row">
+            <span class="key">Correo de soporte</span>
+            <span class="val">parking@ulacit.ac.cr</span>
           </div>
         </div>
 
-        <div class="section-title">Información General</div>
-        <div class="panels-row">
-          <!-- Panel izquierdo: info del sistema -->
-          <div class="info-panel">
-            <h3>🏫 Información del Sistema</h3>
+        <!-- Panel derecho: turnos de hoy -->
+        <div class="info-panel">
+          <h3>🕐 Turnos de Hoy</h3>
 
-            <div class="info-row">
-              <span class="key">Institución</span>
-              <span class="val">ULACIT</span>
+          <!-- Turno Diurno -->
+          <div class="shift-block">
+            <div class="shift-header">
+              <span class="shift-badge day">☀️ Turno Diurno</span>
+              <span class="shift-hours">6:00 AM – 2:00 PM</span>
             </div>
-            <div class="info-row">
-              <span class="key">Sistema</span>
-              <span class="val">ULACIT Parking v1.0</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Ubicación</span>
-              <span class="val">Edificio Principal, ULACIT</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Capacidad total</span>
-              <span class="val">120 espacios</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Espacios para discapacitados</span>
-              <span class="val">6 espacios</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Horario de operación</span>
-              <span class="val">6:00 AM – 10:00 PM</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Teléfono de soporte</span>
-              <span class="val">+506 2436-6000</span>
-            </div>
-            <div class="info-row">
-              <span class="key">Correo de soporte</span>
-              <span class="val">parking@ulacit.ac.cr</span>
+            <div class="staff-list">
+              <div class="staff-item">
+                <div class="staff-avatar av-day">CR</div>
+                <div class="staff-info">
+                  <div class="staff-name">Genesis Arias</div>
+                  <div class="staff-role">Encargado</div>
+                </div>
+                <span class="pill pill-blue">Principal</span>
+              </div>
+              <div class="staff-item">
+                <div class="staff-avatar av-day">LM</div>
+                <div class="staff-info">
+                  <div class="staff-name">Amado Arnesen</div>
+                  <div class="staff-role">Segundo</div>
+                </div>
+                <span class="pill pill-blue">Apoyo</span>
+              </div>
             </div>
           </div>
 
-          <!-- Panel derecho: turnos de hoy -->
-          <div class="info-panel">
-            <h3>🕐 Turnos de Hoy</h3>
+          <div class="shift-divider"></div>
 
-            <!-- Turno Diurno -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge day">☀️ Turno Diurno</span>
-                <span class="shift-hours">6:00 AM – 2:00 PM</span>
-              </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-day">CR</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Genesis Arias</div>
-                    <div class="staff-role">Encargado</div>
-                  </div>
-                  <span class="pill pill-blue">Principal</span>
+          <!-- Turno Vespertino -->
+          <div class="shift-block">
+            <div class="shift-header">
+              <span class="shift-badge eve">🌤️ Turno Vespertino</span>
+              <span class="shift-hours">2:00 PM – 6:00 PM</span>
+            </div>
+            <div class="staff-list">
+              <div class="staff-item">
+                <div class="staff-avatar av-eve">AV</div>
+                <div class="staff-info">
+                  <div class="staff-name">Gabriel Ruiz</div>
+                  <div class="staff-role">Encargado</div>
                 </div>
-                <div class="staff-item">
-                  <div class="staff-avatar av-day">LM</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Amado Arnesen</div>
-                    <div class="staff-role">Segundo</div>
-                  </div>
-                  <span class="pill pill-blue">Apoyo</span>
-                </div>
+                <span class="pill pill-blue">Principal</span>
               </div>
             </div>
+          </div>
 
-            <div class="shift-divider"></div>
+          <div class="shift-divider"></div>
 
-            <!-- Turno Vespertino -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge eve">🌤️ Turno Vespertino</span>
-                <span class="shift-hours">2:00 PM – 6:00 PM</span>
-              </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-eve">AV</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Gabriel Ruiz</div>
-                    <div class="staff-role">Encargado</div>
-                  </div>
-                  <span class="pill pill-blue">Principal</span>
-                </div>
-              </div>
+          <!-- Turno Nocturno -->
+          <div class="shift-block">
+            <div class="shift-header">
+              <span class="shift-badge night">🌙 Turno Nocturno</span>
+              <span class="shift-hours">6:00 PM – 10:00 PM</span>
             </div>
-
-            <div class="shift-divider"></div>
-
-            <!-- Turno Nocturno -->
-            <div class="shift-block">
-              <div class="shift-header">
-                <span class="shift-badge night">🌙 Turno Nocturno</span>
-                <span class="shift-hours">6:00 PM – 10:00 PM</span>
+            <div class="staff-list">
+              <div class="staff-item">
+                <div class="staff-avatar av-night">MJ</div>
+                <div class="staff-info">
+                  <div class="staff-name">Kir Feng</div>
+                  <div class="staff-role">Encargado</div>
+                </div>
+                <span class="pill pill-night">Principal</span>
               </div>
-              <div class="staff-list">
-                <div class="staff-item">
-                  <div class="staff-avatar av-night">MJ</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Kir Feng</div>
-                    <div class="staff-role">Encargado</div>
-                  </div>
-                  <span class="pill pill-night">Principal</span>
+              <div class="staff-item">
+                <div class="staff-avatar av-night">DS</div>
+                <div class="staff-info">
+                  <div class="staff-name">Juan Castro</div>
+                  <div class="staff-role">Segundo</div>
                 </div>
-                <div class="staff-item">
-                  <div class="staff-avatar av-night">DS</div>
-                  <div class="staff-info">
-                    <div class="staff-name">Juan Castro</div>
-                    <div class="staff-role">Segundo</div>
-                  </div>
-                  <span class="pill pill-night">Apoyo</span>
-                </div>
+                <span class="pill pill-night">Apoyo</span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
