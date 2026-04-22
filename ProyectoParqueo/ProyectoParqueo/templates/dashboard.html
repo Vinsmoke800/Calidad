@@ -590,9 +590,13 @@
           <circle cx="16.5" cy="16.5" r="1.5"></circle>
           <path d="M5 11l2-4h10l2 4"></path>
         </svg>
-        <span>Lista de Vehículos</span>
+        <span>Parqueos</span>
       </a>
       <div style="flex: 1"></div>
+
+      <a href="{{ url_for('asignar_vehiculo') }}" class="nav-link">
+        <span>Asignar Vehículo</span>
+      </a>
 
       <a href="{{ url_for('logout') }}" class="nav-link logout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

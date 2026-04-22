@@ -1,141 +1,338 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ULACIT Parking</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista de Vehículos - ULACIT Parking</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #5f4b8b, #7a5cff);
-            color: white;
-            text-align: center;
-        }
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
 
-        .container {
-            padding: 40px;
-        }
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        button{
-            background: #6c4cff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            margin: 8px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    :root {
+      --purple-deep: #6c3fc5;
+      --purple-mid: #8b5cf6;
+      --purple-light: #a78bfa;
+      --purple-pale: #ede9fe;
+      --peach: #ffbb99;
+      --white: #ffffff;
+      --gray-bg: #f3f0ff;
+      --gray-text: #6b7280;
+      --sidebar-w: 260px;
+    }
 
-        .parqueos{
-            display: none;
-        }
+    body {
+      font-family: "Sora", sans-serif;
+      background: var(--gray-bg);
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .detalle{
-            display: none;
-            margin-top: 15px;
-        }
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(
+        175deg,
+        var(--purple-deep) 0%,
+        #7927af 60%,
+        #2d1a6e 100%
+      );
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(108, 63, 197, 0.18);
+    }
 
-        .espacios{
-            display: grid;
-            grid-template-columns: repeat(5,60px);
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
+    .sidebar-header {
+      padding: 32px 24px 28px;
+      border-bottom: 1px solid rgba(230, 224, 224, 0.904);
+    }
 
-        .espacio{
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 15px;
-        }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        /*estados*/
-        .disponible{
-            background-color: green;
-        }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .ocupados{
-            background-color: red;
-            cursor: not-allowed;
-        }
+    .brand-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: white;
+    }
 
-        .seleccionado{
-            border: 3px yellow;
+    .brand-name span {
+      display: block;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.55);
+    }
 
-        }
-    </style>
+    nav {
+      flex: 1;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      padding: 0 10px;
+      margin: 12px 0 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .nav-link.active {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-weight: 600;
+    }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: white;
+      padding: 18px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+    }
+
+    .topbar h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .badge-admin {
+      background: var(--purple-pale);
+      color: var(--purple-deep);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .content {
+      padding: 32px 36px;
+    }
+
+    .page-banner {
+      background: linear-gradient(
+        100deg,
+        var(--purple-deep) 0%,
+        var(--purple-mid) 60%,
+        var(--purple-light) 100%
+      );
+      border-radius: 18px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      color: white;
+    }
+
+    .page-banner h2 {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .page-banner p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .parqueo-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+    }
+
+    .parqueo-card h3 {
+      margin-bottom: 20px;
+      color: #111827;
+    }
+
+    .espacios {
+      display: grid;
+      grid-template-columns: repeat(5, 70px);
+      gap: 12px;
+      justify-content: start;
+    }
+
+    .espacio {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+
+    .disponible {
+      background: #16a34a;
+    }
+
+    .ocupado {
+      background: #dc2626;
+      cursor: not-allowed;
+    }
+
+    .seleccionado {
+      border: 3px solid yellow;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+      }
+
+      .brand-name,
+      .nav-link span,
+      .nav-label {
+        display: none;
+      }
+
+      .main {
+        margin-left: 70px;
+      }
+
+      .content {
+        padding: 20px 16px;
+      }
+
+      .espacios {
+        grid-template-columns: repeat(3, 70px);
+      }
+    }
+  </style>
 </head>
-<body>
-    
-    <div class="container">
-        <h1>ULACIT Parking</h1>
-        <button onclick="mostrarparqueos()">Ver Parqueos</button>
 
-        <div id="listadeparqueos" class="parqueos">
-            <h2>Parqueos</h2>
-            <button onclick="mostrardetalle(1)">Parqueo 1</button>
-            <div id="detalle1" class="detalle"></div>
-            <button onclick="mostrardetalle(2)">Parqueo 2</button>
-            <div id="detalle2" class="detalle"></div>
-            <button onclick="mostrardetalle(3)">Parqueo 3</button>
-            <div id="detalle3" class="detalle"></div>
-            <button onclick="mostrardetalle(4)">Parqueo 4</button>
-            <div id="detalle4" class="detalle"></div>
-            <button onclick="mostrardetalle(5)">Parqueo 5</button>
-            <div id="detalle5" class="detalle"></div>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon">P</div>
+        <div class="brand-name">
+          ULACIT
+          <span>ULACIT Parking</span>
         </div>
+      </div>
     </div>
 
-    <script>
-    function mostrarParqueos() {
-        document.getElementById("listaParqueos").style.display = "block";
-    }
+    <nav>
+      <div class="nav-label">Menú principal</div>
 
-    function mostrarDetalle(num) {
-        let contenedor = document.getElementById("detalle" + num);
-        contenedor.innerHTML = "";
+      <a href="{{ url_for('dashboard') }}" class="nav-link">
+        <span>Dashboard</span>
+      </a>
 
-        let grid = document.createElement("div");
-        grid.className = "espacios";
+      <a href="{{ url_for('register_user') }}" class="nav-link">
+        <span>Registrar Usuario</span>
+      </a>
 
-        for (let i = 1; i <= 20; i++) {
-            let espacio = document.createElement("div");
-            espacio.classList.add("espacio");
+      <a href="{{ url_for('lista_usuarios') }}" class="nav-link">
+        <span>Lista de Usuarios</span>
+      </a>
 
-            let disponible = Math.random() > 0.4;
+      <a href="{{ url_for('lista_vehiculos') }}" class="nav-link active">
+        <span>Lista de Vehículos</span>
+      </a>
 
-            if (disponible) {
-                espacio.classList.add("disponible");
-                espacio.innerText = i;
+      <div style="flex:1"></div>
 
-                espacio.onclick = function () {
-                    // Quitar selección previa
-                    document.querySelectorAll(".seleccionado").forEach(e => {
-                        e.classList.remove("seleccionado");
-                    });
+      <a href="{{ url_for('logout') }}" class="nav-link">
+        <span>Cerrar Sesión</span>
+      </a>
+    </nav>
+  </aside>
 
-                    espacio.classList.add("seleccionado");
-                    alert("Seleccionaste el espacio " + i);
-                };
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Lista de Vehículos</h1>
+      <span class="badge-admin">Admin</span>
+    </div>
 
-            } else {
-                espacio.classList.add("ocupado");
-                espacio.innerText = "X";
-            }
+    <div class="content">
 
-            grid.appendChild(espacio);
-        }
+      <div class="page-banner">
+        <h2>🚗 Parqueos y Espacios</h2>
+        <p>Consulta los espacios disponibles y ocupados en tiempo real.</p>
+      </div>
 
-        contenedor.appendChild(grid);
-        contenedor.style.display = "block";
-    }
-</script>
+      {% for parqueo in parqueos %}
+      <div class="parqueo-card">
+        <h3>{{ parqueo.nombre }}</h3>
+
+        <div class="espacios">
+          {% for espacio in parqueo.espacios %}
+          <div
+            class="espacio {% if espacio.id_vehiculo %}ocupado{% else %}disponible{% endif %}"
+          >
+            {{ espacio.numero_espacio }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
 </body>
 </html>
