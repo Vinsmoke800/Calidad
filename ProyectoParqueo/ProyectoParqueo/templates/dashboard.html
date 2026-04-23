@@ -595,7 +595,7 @@
           <circle cx="16.5" cy="16.5" r="1.5"/>
           <path d="M5 11l2-4h10l2 4"/>
         </svg>
-        <span>Lista de Vehículos</span>
+        <span>Parqueos</span>
       </a>
 
       <a href="{{ url_for('asignar_vehiculo') }}" class="nav-link {% if request.endpoint == 'asignar_vehiculo' %}active{% endif %}">
@@ -615,14 +615,6 @@
           <line x1="8" y1="12" x2="16" y2="12"/>
         </svg>
         <span>Agregar Vehículo</span>
-      </a>
-
-      <a href="{{ url_for('parqueos') }}" class="nav-link {% if request.endpoint == 'parqueos' %}active{% endif %}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
-        </svg>
-        <span>Parqueos</span>
       </a>
 
       <div style="flex: 1"></div>

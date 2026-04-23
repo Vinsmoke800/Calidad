@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from config import DATABASE_CONFIG
 import pyodbc
-import random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -59,7 +58,7 @@ def login():
                 if user.rol == 'Administrador':
                     return redirect(url_for('dashboard'))
                 else:
-                    return redirect(url_for('parqueos'))
+                    return redirect(url_for('lista_vehiculos'))
             else:
                 flash("Correo o contraseña incorrectos.", "danger")
 
@@ -291,7 +290,7 @@ def asignar_vehiculo():
         FROM usuarios
         ORDER BY nombre
     """)
-    usuarios = cursor.fetchall()
+    usuarios = [{'id': u.id_usuario, 'nombre': u.nombre} for u in cursor.fetchall()]
 
     # parqueos
     cursor.execute("""
@@ -447,27 +446,6 @@ def logout():
     flash("Sesión cerrada.", "success")
     return redirect(url_for('login'))
 
-
-# -------------------------------
-# 🅿️ PARQUEOS
-# -------------------------------
-@app.route('/parqueos')
-def parqueos():
-    if 'user_role' not in session:
-        flash('Debes iniciar sesión.', 'danger')
-        return redirect(url_for('login'))
-
-    total = 120
-    random.seed(7)
-    espacios = [{'numero': i + 1, 'ocupado': random.random() < 0.38} for i in range(total)]
-    ocupados = sum(1 for e in espacios if e['ocupado'])
-    disponibles = total - ocupados
-
-    return render_template('parqueos.html',
-                           total=total,
-                           ocupados=ocupados,
-                           disponibles=disponibles,
-                           espacios=espacios)
 
 # -------------------------------
 # 🚗 AGREGAR VEHÍCULO
