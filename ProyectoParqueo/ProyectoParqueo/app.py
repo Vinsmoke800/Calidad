@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from config import DATABASE_CONFIG
 import pyodbc
+import random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -49,7 +50,10 @@ def login():
                 session['user_id'] = user.id_usuario
                 session['user_name'] = user.nombre
                 session['user_role'] = user.rol
-                return redirect(url_for('dashboard'))
+                if user.rol == 'Administrador':
+                    return redirect(url_for('dashboard'))
+                else:
+                    return redirect(url_for('parqueos'))
             else:
                 flash('Correo o contraseña incorrectos.', 'danger')
 
@@ -137,6 +141,70 @@ def lista_usuarios():
     conn.close()
 
     return render_template('lista_usuarios.html', usuarios=usuarios)
+# -------------------------------
+# 🅿️ PARQUEOS
+# -------------------------------
+@app.route('/parqueos')
+def parqueos():
+    if 'user_role' not in session:
+        flash('Debes iniciar sesión.', 'danger')
+        return redirect(url_for('login'))
+
+    total = 120
+    random.seed(7)
+    espacios = [{'numero': i + 1, 'ocupado': random.random() < 0.38} for i in range(total)]
+    ocupados = sum(1 for e in espacios if e['ocupado'])
+    disponibles = total - ocupados
+
+    return render_template('parqueos.html',
+                           total=total,
+                           ocupados=ocupados,
+                           disponibles=disponibles,
+                           espacios=espacios)
+
+# -------------------------------
+# 🚗 AGREGAR VEHÍCULO
+# -------------------------------
+@app.route('/admin/agregar-vehiculo', methods=['GET', 'POST'])
+def agregar_vehiculo():
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        flash('Acceso denegado.', 'danger')
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    usuarios = []
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id_usuario, nombre FROM usuarios ORDER BY nombre")
+        usuarios = [{'id': u.id_usuario, 'nombre': u.nombre} for u in cursor.fetchall()]
+        conn.close()
+
+    if request.method == 'POST':
+        try:
+            conn = get_db_connection()
+            if conn is None:
+                flash("No se pudo conectar a la base de datos.", 'danger')
+                return render_template('agregar_vehiculo.html', usuarios=usuarios)
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO vehiculos (placa, marca, modelo, color, id_usuario)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                request.form['placa'].upper(),
+                request.form['marca'],
+                request.form['modelo'],
+                request.form['color'],
+                request.form['id_usuario']
+            ))
+            conn.commit()
+            conn.close()
+            flash('Vehículo registrado correctamente.', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            flash(f"Error: {e}", 'danger')
+
+    return render_template('agregar_vehiculo.html', usuarios=usuarios)
+
 # -------------------------------
 if __name__ == '__main__':
     app.run(debug=True)

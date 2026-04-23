@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parqueos - ULACIT Parking</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --purple-deep: #6c3fc5;
+        --purple-mid: #8b5cf6;
+        --purple-light: #a78bfa;
+        --purple-pale: #ede9fe;
+        --peach: #ffbb99;
+        --white: #ffffff;
+        --gray-bg: #f3f0ff;
+        --gray-text: #6b7280;
+        --sidebar-w: 260px;
+      }
+
+      body {
+        font-family: "Sora", sans-serif;
+        background: var(--gray-bg);
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ══ SIDEBAR ══ */
+      .sidebar {
+        width: var(--sidebar-w);
+        min-height: 100vh;
+        background: linear-gradient(175deg, var(--purple-deep) 0%, #7927af 60%, #2d1a6e 100%);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0; left: 0;
+        z-index: 100;
+        box-shadow: 4px 0 24px rgba(108, 63, 197, 0.18);
+        overflow: hidden;
+      }
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: -80px; right: -80px;
+        width: 220px; height: 220px;
+        background: rgba(167, 139, 250, 0.18);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .sidebar-header {
+        padding: 32px 24px 28px;
+        border-bottom: 1px solid rgba(230, 224, 224, 0.904);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+      .brand-icon {
+        width: 40px; height: 40px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .brand-icon svg { width: 22px; height: 22px; }
+      .brand-name { font-size: 0.95rem; font-weight: 700; color: var(--white); line-height: 1.2; }
+      .brand-name span { display: block; font-size: 0.72rem; font-weight: 400; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; }
+
+      nav { flex: 1; padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
+      .nav-label {
+        font-size: 0.65rem; font-weight: 600; letter-spacing: 1.2px;
+        text-transform: uppercase; color: rgba(255,255,255,0.35);
+        padding: 0 10px; margin: 12px 0 6px;
+      }
+      .nav-link {
+        display: flex; align-items: center; gap: 12px;
+        padding: 11px 14px; border-radius: 10px;
+        color: rgba(255,255,255,0.75); text-decoration: none;
+        font-size: 0.86rem; font-weight: 500;
+        transition: background 0.2s, color 0.2s;
+        position: relative;
+      }
+      .nav-link:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+      .nav-link.active { background: rgba(255,255,255,0.15); color: var(--white); font-weight: 600; }
+      .nav-link.active::before {
+        content: ""; position: absolute;
+        left: 0; top: 20%; bottom: 20%;
+        width: 3px; background: var(--peach);
+        border-radius: 0 4px 4px 0;
+      }
+      .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+      .nav-link.logout { color: rgba(255,120,120,0.8); }
+      .nav-link.logout:hover { background: rgba(255,80,80,0.12); color: #fca5a5; }
+
+      /* ══ MAIN ══ */
+      .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+      .topbar {
+        background: var(--white); padding: 18px 36px;
+        display: flex; align-items: center; justify-content: space-between;
+        box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+        position: sticky; top: 0; z-index: 50;
+      }
+      .topbar h1 { font-size: 1.2rem; font-weight: 700; color: #111827; }
+      .badge-role {
+        font-size: 0.72rem; font-weight: 600;
+        padding: 4px 10px; border-radius: 20px;
+      }
+      .badge-admin { background: var(--purple-pale); color: var(--purple-deep); }
+      .badge-usuario { background: #dbeafe; color: #1d4ed8; }
+
+      .content { padding: 32px 36px; flex: 1; }
+
+      /* Banner */
+      .page-banner {
+        background: linear-gradient(100deg, var(--purple-deep) 0%, var(--purple-mid) 60%, var(--purple-light) 100%);
+        border-radius: 18px; padding: 28px 32px; margin-bottom: 28px;
+        display: flex; align-items: center; justify-content: space-between;
+        overflow: hidden; position: relative;
+        animation: fadeUp 0.5s ease both;
+      }
+      .page-banner::after {
+        content: ""; position: absolute;
+        right: -40px; top: -40px;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,0.08); border-radius: 50%;
+      }
+      .page-banner h2 { font-size: 1.4rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+      .page-banner p { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+      .banner-icon { font-size: 3rem; z-index: 1; }
+
+      /* Stats */
+      .stats-row {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 16px; margin-bottom: 28px;
+        animation: fadeUp 0.55s 0.1s ease both;
+      }
+      .stat-card {
+        background: var(--white); border-radius: 14px; padding: 20px;
+        box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+        display: flex; align-items: center; gap: 14px;
+      }
+      .stat-icon {
+        width: 52px; height: 52px; border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; flex-shrink: 0;
+      }
+      .stat-icon.purple { background: var(--purple-pale); }
+      .stat-icon.green { background: #d1fae5; }
+      .stat-icon.red { background: #fee2e2; }
+      .stat-info small { font-size: 0.72rem; color: var(--gray-text); display: block; }
+      .stat-info strong { font-size: 1.5rem; font-weight: 700; color: #111827; }
+
+      /* Grid de espacios (solo admin) */
+      .spaces-card {
+        background: var(--white); border-radius: 16px; padding: 24px;
+        box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+        animation: fadeUp 0.6s 0.15s ease both;
+      }
+      .spaces-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 20px; padding-bottom: 14px;
+        border-bottom: 2px solid var(--gray-bg);
+      }
+      .spaces-card-header h3 { font-size: 0.95rem; font-weight: 700; color: #111827; }
+      .legend {
+        display: flex; align-items: center; gap: 16px; font-size: 0.75rem; color: var(--gray-text);
+      }
+      .legend-dot {
+        width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 5px;
+      }
+      .dot-libre { background: #d1fae5; border: 1.5px solid #6ee7b7; }
+      .dot-ocupado { background: #fee2e2; border: 1.5px solid #fca5a5; }
+
+      .spaces-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 6px;
+      }
+      .space-box {
+        aspect-ratio: 1;
+        border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.58rem; font-weight: 600;
+        cursor: default;
+        transition: transform 0.15s;
+      }
+      .space-box:hover { transform: scale(1.15); }
+      .space-box.libre { background: #d1fae5; color: #065f46; border: 1.5px solid #6ee7b7; }
+      .space-box.ocupado { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; }
+
+      /* Info sin detalle (usuario común) */
+      .info-card {
+        background: var(--white); border-radius: 16px; padding: 32px;
+        box-shadow: 0 2px 12px rgba(108,63,197,0.07);
+        text-align: center;
+        animation: fadeUp 0.6s 0.15s ease both;
+      }
+      .info-card .icon { font-size: 3.5rem; margin-bottom: 16px; }
+      .info-card h3 { font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+      .info-card p { font-size: 0.85rem; color: var(--gray-text); line-height: 1.6; }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (max-width: 768px) {
+        .sidebar { width: 70px; }
+        .brand-name, .nav-link span, .nav-label { display: none; }
+        .main { margin-left: 70px; }
+        .stats-row { grid-template-columns: 1fr; }
+        .spaces-grid { grid-template-columns: repeat(8, 1fr); }
+        .content { padding: 20px 16px; }
+        .topbar { padding: 14px 20px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="18" height="18" rx="4" fill="rgba(255,255,255,0.2)"/>
+              <path d="M9 17V7h4.5a3 3 0 0 1 0 6H9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="brand-name">
+            ULACIT
+            <span>ULACIT Parking</span>
+          </div>
+        </div>
+      </div>
+
+      <nav>
+        <div class="nav-label">Menú principal</div>
+
+        {% if session.get('user_role') == 'Administrador' %}
+        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('register_user') }}" class="nav-link {% if request.endpoint == 'register_user' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+          <span>Registrar Nuevo Usuario</span>
+        </a>
+        <a href="{{ url_for('lista_usuarios') }}" class="nav-link {% if request.endpoint == 'lista_usuarios' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Lista de Usuarios</span>
+        </a>
+        <a href="{{ url_for('agregar_vehiculo') }}" class="nav-link {% if request.endpoint == 'agregar_vehiculo' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <path d="M16 8h4l3 3v3h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          <span>Agregar Vehículo</span>
+        </a>
+        {% endif %}
+
+        <a href="{{ url_for('parqueos') }}" class="nav-link {% if request.endpoint == 'parqueos' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>
+          </svg>
+          <span>Parqueos</span>
+        </a>
+
+        <div style="flex: 1"></div>
+
+        <a href="{{ url_for('logout') }}" class="nav-link logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>Cerrar Sesión</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ══ MAIN ══ -->
+    <div class="main">
+      <div class="topbar">
+        <h1>Parqueos</h1>
+        <div class="topbar-right">
+          {% if session.get('user_role') == 'Administrador' %}
+          <span class="badge-role badge-admin">Administrador</span>
+          {% else %}
+          <span class="badge-role badge-usuario">{{ session.get('user_name', 'Usuario') }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-banner">
+          <div>
+            <h2>🅿️ Estado del Parqueo</h2>
+            <p>Disponibilidad en tiempo real · ULACIT, Edificio Principal</p>
+          </div>
+          <div class="banner-icon">🚗</div>
+        </div>
+
+        <!-- Tarjetas de resumen (todos los usuarios) -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon purple">🅿️</div>
+            <div class="stat-info">
+              <small>Total de espacios</small>
+              <strong>{{ total }}</strong>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <div class="stat-info">
+              <small>Disponibles</small>
+              <strong>{{ disponibles }}</strong>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">🔴</div>
+            <div class="stat-info">
+              <small>Ocupados</small>
+              <strong>{{ ocupados }}</strong>
+            </div>
+          </div>
+        </div>
+
+        {% if session.get('user_role') == 'Administrador' %}
+        <!-- Grilla de espacios individuales: solo admin -->
+        <div class="spaces-card">
+          <div class="spaces-card-header">
+            <h3>📍 Detalle de Espacios</h3>
+            <div class="legend">
+              <span><span class="legend-dot dot-libre"></span>Libre</span>
+              <span><span class="legend-dot dot-ocupado"></span>Ocupado</span>
+            </div>
+          </div>
+          <div class="spaces-grid">
+            {% for e in espacios %}
+            <div class="space-box {% if e.ocupado %}ocupado{% else %}libre{% endif %}"
+                 title="Espacio #{{ e.numero }} – {% if e.ocupado %}Ocupado{% else %}Libre{% endif %}">
+              {{ e.numero }}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% else %}
+        <!-- Vista sin detalle para usuario común -->
+        <div class="info-card">
+          <div class="icon">🅿️</div>
+          <h3>Hay {{ disponibles }} espacios disponibles</h3>
+          <p>
+            El parqueo de ULACIT opera de <strong>6:00 AM a 10:00 PM</strong>.<br>
+            Para más información comuníquese al <strong>+506 2436-6000</strong> o a
+            <strong>parking@ulacit.ac.cr</strong>.
+          </p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
