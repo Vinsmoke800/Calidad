@@ -358,11 +358,14 @@
                                        placeholder="Ej: Toyota" required>
                             </div>
 
-                            <!-- Modelo -->
+                            <!-- Tipo -->
                             <div class="field">
-                                <label for="modelo">Modelo</label>
-                                <input type="text" id="modelo" name="modelo"
-                                       placeholder="Ej: Corolla 2022" required>
+                                <label for="tipo">Tipo</label>
+                                <select id="tipo" name="tipo" required>
+                                    <option value="" disabled selected>Selecciona un tipo</option>
+                                    <option value="Vehículo">Vehículo</option>
+                                    <option value="Moto">Moto</option>
+                                </select>
                             </div>
 
                         </div>

@@ -58,7 +58,7 @@ def login():
                 if user.rol == 'Administrador':
                     return redirect(url_for('dashboard'))
                 else:
-                    return redirect(url_for('lista_vehiculos'))
+                    return redirect(url_for('vista_parqueos'))
             else:
                 flash("Correo o contraseña incorrectos.", "danger")
 
@@ -79,6 +79,8 @@ def dashboard():
     if 'user_role' not in session:
         flash("Debes iniciar sesión.", "danger")
         return redirect(url_for('login'))
+    if session['user_role'] != 'Administrador':
+        return redirect(url_for('vista_parqueos'))
 
     return render_template(
         "dashboard.html",
@@ -93,6 +95,8 @@ def dashboard():
 def register_user():
     if 'user_role' not in session:
         return redirect(url_for('login'))
+    if session['user_role'] != 'Administrador':
+        return redirect(url_for('vista_parqueos'))
 
     if request.method == 'POST':
         try:
@@ -145,6 +149,8 @@ def register_user():
 def lista_vehiculos():
     if 'user_role' not in session:
         return redirect(url_for('login'))
+    if session['user_role'] != 'Administrador':
+        return redirect(url_for('vista_parqueos'))
 
     conn = get_db_connection()
 
@@ -205,6 +211,8 @@ def lista_vehiculos():
 def detalle_vehiculo(id_espacio):
     if 'user_role' not in session:
         return redirect(url_for('login'))
+    if session['user_role'] != 'Administrador':
+        return redirect(url_for('vista_parqueos'))
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -273,6 +281,8 @@ def detalle_vehiculo(id_espacio):
 def asignar_vehiculo():
     if 'user_role' not in session:
         return redirect(url_for('login'))
+    if session['user_role'] != 'Administrador':
+        return redirect(url_for('vista_parqueos'))
 
     conn = get_db_connection()
 
@@ -448,6 +458,49 @@ def logout():
 
 
 # -------------------------------
+# 👤 VISTA PARQUEOS (USUARIO COMÚN)
+# -------------------------------
+@app.route('/mi-parqueo')
+def vista_parqueos():
+    if 'user_role' not in session:
+        flash('Debes iniciar sesión.', 'danger')
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", "danger")
+        return redirect(url_for('login'))
+
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT
+            p.id_parqueo,
+            p.nombre,
+            e.numero_espacio,
+            e.id_vehiculo
+        FROM parqueos p
+        INNER JOIN espacios e
+            ON p.id_parqueo = e.id_parqueo
+        ORDER BY p.id_parqueo, e.numero_espacio
+    """)
+
+    parqueos_dict = {}
+    for fila in cursor.fetchall():
+        pid = fila.id_parqueo
+        if pid not in parqueos_dict:
+            parqueos_dict[pid] = {"nombre": fila.nombre, "espacios": []}
+        parqueos_dict[pid]["espacios"].append({
+            "numero_espacio": fila.numero_espacio,
+            "ocupado": fila.id_vehiculo is not None
+        })
+
+    cursor.close()
+    conn.close()
+
+    parqueos = list(parqueos_dict.values())
+    return render_template('vista_usuario.html', parqueos=parqueos)
+
+# -------------------------------
 # 🚗 AGREGAR VEHÍCULO
 # -------------------------------
 @app.route('/admin/agregar-vehiculo', methods=['GET', 'POST'])
@@ -472,12 +525,12 @@ def agregar_vehiculo():
                 return render_template('agregar_vehiculo.html', usuarios=usuarios)
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO vehiculos (placa, marca, modelo, color, id_usuario)
+                INSERT INTO vehiculos (numero_placa, marca, tipo, color, id_usuario)
                 VALUES (?, ?, ?, ?, ?)
             """, (
                 request.form['placa'].upper(),
                 request.form['marca'],
-                request.form['modelo'],
+                request.form['tipo'],
                 request.form['color'],
                 request.form['id_usuario']
             ))
