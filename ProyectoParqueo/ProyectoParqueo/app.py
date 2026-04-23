@@ -6,6 +6,7 @@ import random
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+
 # -------------------------------
 # 🔌 CONEXIÓN
 # -------------------------------
@@ -16,10 +17,14 @@ def get_db_connection():
         print("Error de conexión:", e)
         return None
 
+
+# -------------------------------
+# 🏠 INICIO
 # -------------------------------
 @app.route('/')
 def index():
     return redirect(url_for('login'))
+
 
 # -------------------------------
 # 🔐 LOGIN
@@ -32,18 +37,19 @@ def login():
 
         try:
             conn = get_db_connection()
+
             if conn is None:
-                flash("No se pudo conectar a la base de datos.", 'danger')
-                return render_template('login.html')
+                flash("No se pudo conectar a la base de datos.", "danger")
+                return render_template("login.html")
 
             cursor = conn.cursor()
 
-            query = """
+            cursor.execute("""
                 SELECT id_usuario, nombre, rol, clave
                 FROM usuarios
                 WHERE correo_electronico = ?
-            """
-            cursor.execute(query, (correo,))
+            """, (correo,))
+
             user = cursor.fetchone()
 
             if user and user.clave == clave:
@@ -55,23 +61,31 @@ def login():
                 else:
                     return redirect(url_for('parqueos'))
             else:
-                flash('Correo o contraseña incorrectos.', 'danger')
+                flash("Correo o contraseña incorrectos.", "danger")
+
+            cursor.close()
+            conn.close()
 
         except Exception as e:
-            flash(f"Error en login: {e}", 'danger')
+            flash(f"Error en login: {e}", "danger")
 
-    return render_template('login.html')
+    return render_template("login.html")
+
 
 # -------------------------------
 # 🧭 DASHBOARD
 # -------------------------------
 @app.route('/dashboard')
 def dashboard():
-    if 'user_role' in session:
-        return render_template('dashboard.html', user_name=session['user_name'])
-    else:
-        flash('Debes iniciar sesión.', 'danger')
+    if 'user_role' not in session:
+        flash("Debes iniciar sesión.", "danger")
         return redirect(url_for('login'))
+
+    return render_template(
+        "dashboard.html",
+        user_name=session['user_name']
+    )
+
 
 # -------------------------------
 # 👤 REGISTRAR USUARIO
@@ -84,15 +98,23 @@ def register_user():
     if request.method == 'POST':
         try:
             conn = get_db_connection()
+
             if conn is None:
-                flash("No se pudo conectar a la base de datos.", 'danger')
-                return render_template('register_user.html')
+                flash("No se pudo conectar a la base de datos.", "danger")
+                return render_template("register_user.html")
 
             cursor = conn.cursor()
 
             cursor.execute("""
                 INSERT INTO usuarios
-                (nombre, correo_electronico, fecha_nacimiento, identificacion, numero_carne, rol)
+                (
+                    nombre,
+                    correo_electronico,
+                    fecha_nacimiento,
+                    identificacion,
+                    numero_carne,
+                    rol
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 request.form['nombre'],
@@ -104,13 +126,317 @@ def register_user():
             ))
 
             conn.commit()
-            flash('Usuario registrado correctamente.', 'success')
+
+            cursor.close()
+            conn.close()
+
+            flash("Usuario registrado correctamente.", "success")
             return redirect(url_for('dashboard'))
 
         except Exception as e:
-            flash(f"Error: {e}", 'danger')
+            flash(f"Error: {e}", "danger")
 
-    return render_template('register_user.html')
+    return render_template("register_user.html")
+
+
+# -------------------------------
+# 🚗 LISTA DE VEHÍCULOS / PARQUEOS
+# -------------------------------
+@app.route('/lista_vehiculos')
+def lista_vehiculos():
+    if 'user_role' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", "danger")
+        return redirect(url_for('dashboard'))
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            p.id_parqueo,
+            p.nombre,
+            e.id_espacio,
+            e.numero_espacio,
+            e.id_vehiculo
+        FROM parqueos p
+        INNER JOIN espacios e
+            ON p.id_parqueo = e.id_parqueo
+        ORDER BY p.id_parqueo, e.numero_espacio
+    """)
+
+    datos = cursor.fetchall()
+
+    parqueos_dict = {}
+
+    for fila in datos:
+        id_parqueo = fila.id_parqueo
+
+        if id_parqueo not in parqueos_dict:
+            parqueos_dict[id_parqueo] = {
+                "id_parqueo": fila.id_parqueo,
+                "nombre": fila.nombre,
+                "espacios": []
+            }
+
+        parqueos_dict[id_parqueo]["espacios"].append({
+            "id_espacio": fila.id_espacio,
+            "numero_espacio": fila.numero_espacio,
+            "id_vehiculo": fila.id_vehiculo
+        })
+
+    cursor.close()
+    conn.close()
+
+    parqueos = list(parqueos_dict.values())
+
+    return render_template(
+        "lista_vehiculos.html",
+        parqueos=parqueos
+    )
+
+# -------------------------------
+# 🚗 Detalle VEHÍCULOS / PARQUEOS
+# -------------------------------
+
+@app.route('/detalle_vehiculo/<int:id_espacio>', methods=['GET', 'POST'])
+def detalle_vehiculo(id_espacio):
+    if 'user_role' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Si presiona liberar
+    if request.method == 'POST':
+        try:
+            cursor.execute("""
+                UPDATE espacios
+                SET id_vehiculo = NULL
+                WHERE id_espacio = ?
+            """, (id_espacio,))
+
+            conn.commit()
+            flash('Espacio liberado correctamente.', 'success')
+            return redirect(url_for('lista_vehiculos'))
+
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error al liberar espacio: {e}', 'danger')
+
+    # Obtener información completa
+    cursor.execute("""
+        SELECT
+            e.id_espacio,
+            e.numero_espacio,
+            p.nombre AS nombre_parqueo,
+            v.id_vehiculo,
+            v.marca,
+            v.color,
+            v.numero_placa,
+            v.tipo,
+            u.nombre AS nombre_usuario,
+            u.identificacion,
+            u.numero_carne,
+            u.correo_electronico
+        FROM espacios e
+        INNER JOIN parqueos p
+            ON e.id_parqueo = p.id_parqueo
+        INNER JOIN vehiculos v
+            ON e.id_vehiculo = v.id_vehiculo
+        INNER JOIN usuarios u
+            ON v.id_usuario = u.id_usuario
+        WHERE e.id_espacio = ?
+    """, (id_espacio,))
+
+    detalle = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not detalle:
+        flash('Ese espacio no tiene vehículo asignado.', 'danger')
+        return redirect(url_for('lista_vehiculos'))
+
+    return render_template(
+        'detalle_vehiculo.html',
+        detalle=detalle
+    )
+
+
+# -------------------------------
+# 🚗 ASIGNAR VEHÍCULO A ESPACIO
+# -------------------------------
+@app.route('/asignar_vehiculo', methods=['GET', 'POST'])
+def asignar_vehiculo():
+    if 'user_role' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", "danger")
+        return redirect(url_for('dashboard'))
+
+    cursor = conn.cursor()
+
+    # usuarios
+    cursor.execute("""
+        SELECT
+            id_usuario,
+            nombre
+        FROM usuarios
+        ORDER BY nombre
+    """)
+    usuarios = cursor.fetchall()
+
+    # parqueos
+    cursor.execute("""
+        SELECT
+            id_parqueo,
+            nombre
+        FROM parqueos
+        ORDER BY nombre
+    """)
+    parqueos = cursor.fetchall()
+
+    # espacios disponibles
+    cursor.execute("""
+        SELECT
+            id_espacio,
+            numero_espacio,
+            id_parqueo
+        FROM espacios
+        WHERE id_vehiculo IS NULL
+        ORDER BY id_parqueo, numero_espacio
+    """)
+    espacios_disponibles = cursor.fetchall()
+
+    if request.method == 'POST':
+        try:
+            id_usuario = request.form['id_usuario']
+            id_parqueo = request.form['id_parqueo']
+            id_espacio = request.form['id_espacio']
+
+            # buscar vehículo del usuario
+            cursor.execute("""
+                SELECT TOP 1
+                    id_vehiculo
+                FROM vehiculos
+                WHERE id_usuario = ?
+            """, (id_usuario,))
+
+            vehiculo = cursor.fetchone()
+
+            if not vehiculo:
+                flash(
+                    "Ese usuario no tiene vehículo registrado.",
+                    "danger"
+                )
+                return redirect(url_for('asignar_vehiculo'))
+
+            id_vehiculo = vehiculo.id_vehiculo
+
+            # actualizar SOLO si:
+            # - pertenece al parqueo elegido
+            # - sigue disponible
+            cursor.execute("""
+                UPDATE espacios
+                SET id_vehiculo = ?
+                WHERE id_espacio = ?
+                  AND id_parqueo = ?
+                  AND id_vehiculo IS NULL
+            """, (
+                id_vehiculo,
+                id_espacio,
+                id_parqueo
+            ))
+
+            if cursor.rowcount == 0:
+                conn.rollback()
+
+                flash(
+                    "No se pudo asignar el vehículo. "
+                    "El espacio ya está ocupado o "
+                    "no pertenece a ese parqueo.",
+                    "danger"
+                )
+
+                return redirect(url_for('asignar_vehiculo'))
+
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+
+            flash(
+                "Vehículo asignado correctamente.",
+                "success"
+            )
+
+            return redirect(url_for('lista_vehiculos'))
+
+        except Exception as e:
+            conn.rollback()
+
+            flash(f"Error: {e}", "danger")
+            return redirect(url_for('asignar_vehiculo'))
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "asignar_vehiculo.html",
+        usuarios=usuarios,
+        parqueos=parqueos,
+        espacios_disponibles=espacios_disponibles
+    )
+
+
+# -------------------------------
+# 👥 LISTA DE USUARIOS
+# -------------------------------
+@app.route('/usuarios')
+def lista_usuarios():
+    if (
+        'user_role' not in session
+        or session['user_role'] != 'Administrador'
+    ):
+        flash("Acceso denegado.", "danger")
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", "danger")
+        return redirect(url_for('dashboard'))
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            id_usuario,
+            nombre,
+            correo_electronico,
+            identificacion,
+            numero_carne,
+            rol
+        FROM usuarios
+    """)
+
+    usuarios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "lista_usuarios.html",
+        usuarios=usuarios
+    )
+
 
 # -------------------------------
 # 🚪 LOGOUT
@@ -118,29 +444,10 @@ def register_user():
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Sesión cerrada.', 'success')
+    flash("Sesión cerrada.", "success")
     return redirect(url_for('login'))
 
-# -------------------------------
-# 👥 LISTA DE USUARIOS (Guarda)
-# -------------------------------
-@app.route('/usuarios')
-def lista_usuarios():
-    if 'user_role' not in session or session['user_role'] != 'Administrador':
-        flash('Acceso denegado.', 'danger')
-        return redirect(url_for('login'))
 
-    conn = get_db_connection()
-    if conn is None:
-        flash("No se pudo conectar a la base de datos.", 'danger')
-        return redirect(url_for('dashboard'))
-
-    cursor = conn.cursor()
-    cursor.execute("SELECT id_usuario, nombre, correo_electronico, identificacion, numero_carne, rol FROM usuarios")
-    usuarios = cursor.fetchall()
-    conn.close()
-
-    return render_template('lista_usuarios.html', usuarios=usuarios)
 # -------------------------------
 # 🅿️ PARQUEOS
 # -------------------------------
@@ -208,4 +515,3 @@ def agregar_vehiculo():
 # -------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
-    # -------------------------------
