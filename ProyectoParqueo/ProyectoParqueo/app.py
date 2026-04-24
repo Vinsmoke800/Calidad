@@ -543,6 +543,175 @@ def agregar_vehiculo():
 
     return render_template('agregar_vehiculo.html', usuarios=usuarios)
 
+
+# -------------------------------
+# ✏️ EDITAR USUARIO
+# -------------------------------
+@app.route('/admin/editar-usuario/<int:id_usuario>', methods=['GET', 'POST'])
+def editar_usuario(id_usuario):
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar a la base de datos.", "danger")
+        return redirect(url_for('lista_usuarios'))
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        try:
+            cursor.execute("""
+                UPDATE usuarios
+                SET nombre=?, correo_electronico=?, fecha_nacimiento=?,
+                    identificacion=?, numero_carne=?, rol=?
+                WHERE id_usuario=?
+            """, (
+                request.form['nombre'], request.form['correo'],
+                request.form['fecha_nacimiento'], request.form['identificacion'],
+                request.form['numero_carne'], request.form['rol'], id_usuario
+            ))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            flash("Usuario actualizado correctamente.", "success")
+            return redirect(url_for('lista_usuarios'))
+        except Exception as e:
+            flash(f"Error al actualizar: {e}", "danger")
+    cursor.execute("""
+        SELECT id_usuario, nombre, correo_electronico, fecha_nacimiento,
+               identificacion, numero_carne, rol
+        FROM usuarios WHERE id_usuario=?
+    """, (id_usuario,))
+    usuario = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if not usuario:
+        flash("Usuario no encontrado.", "danger")
+        return redirect(url_for('lista_usuarios'))
+    return render_template('editar_usuario.html', usuario=usuario)
+
+
+# -------------------------------
+# 🗑️ ELIMINAR USUARIO
+# -------------------------------
+@app.route('/admin/eliminar-usuario/<int:id_usuario>', methods=['POST'])
+def eliminar_usuario(id_usuario):
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar.", "danger")
+        return redirect(url_for('lista_usuarios'))
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE espacios SET id_vehiculo=NULL
+            WHERE id_vehiculo IN (SELECT id_vehiculo FROM vehiculos WHERE id_usuario=?)
+        """, (id_usuario,))
+        cursor.execute("DELETE FROM vehiculos WHERE id_usuario=?", (id_usuario,))
+        cursor.execute("DELETE FROM usuarios WHERE id_usuario=?", (id_usuario,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("Usuario eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"Error al eliminar: {e}", "danger")
+    return redirect(url_for('lista_usuarios'))
+
+
+# -------------------------------
+# 🚗 GESTIÓN DE VEHÍCULOS
+# -------------------------------
+@app.route('/admin/vehiculos')
+def lista_vehiculos_admin():
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar.", "danger")
+        return redirect(url_for('dashboard'))
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT v.id_vehiculo, v.numero_placa, v.marca, v.tipo, v.color,
+               u.nombre AS nombre_usuario
+        FROM vehiculos v
+        INNER JOIN usuarios u ON v.id_usuario=u.id_usuario
+        ORDER BY v.id_vehiculo
+    """)
+    vehiculos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('lista_vehiculos_admin.html', vehiculos=vehiculos)
+
+
+# -------------------------------
+# ✏️ EDITAR VEHÍCULO
+# -------------------------------
+@app.route('/admin/editar-vehiculo/<int:id_vehiculo>', methods=['GET', 'POST'])
+def editar_vehiculo(id_vehiculo):
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar.", "danger")
+        return redirect(url_for('lista_vehiculos_admin'))
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        try:
+            cursor.execute("""
+                UPDATE vehiculos
+                SET numero_placa=?, marca=?, tipo=?, color=?
+                WHERE id_vehiculo=?
+            """, (
+                request.form['numero_placa'].upper(),
+                request.form['marca'], request.form['tipo'],
+                request.form['color'], id_vehiculo
+            ))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            flash("Vehículo actualizado correctamente.", "success")
+            return redirect(url_for('lista_vehiculos_admin'))
+        except Exception as e:
+            flash(f"Error al actualizar: {e}", "danger")
+    cursor.execute("""
+        SELECT v.id_vehiculo, v.numero_placa, v.marca, v.tipo, v.color,
+               u.nombre AS nombre_usuario
+        FROM vehiculos v
+        INNER JOIN usuarios u ON v.id_usuario=u.id_usuario
+        WHERE v.id_vehiculo=?
+    """, (id_vehiculo,))
+    vehiculo = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if not vehiculo:
+        flash("Vehículo no encontrado.", "danger")
+        return redirect(url_for('lista_vehiculos_admin'))
+    return render_template('editar_vehiculo.html', vehiculo=vehiculo)
+
+
+# -------------------------------
+# 🗑️ ELIMINAR VEHÍCULO
+# -------------------------------
+@app.route('/admin/eliminar-vehiculo/<int:id_vehiculo>', methods=['POST'])
+def eliminar_vehiculo(id_vehiculo):
+    if 'user_role' not in session or session['user_role'] != 'Administrador':
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn is None:
+        flash("No se pudo conectar.", "danger")
+        return redirect(url_for('lista_vehiculos_admin'))
+    try:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE espacios SET id_vehiculo=NULL WHERE id_vehiculo=?", (id_vehiculo,))
+        cursor.execute("DELETE FROM vehiculos WHERE id_vehiculo=?", (id_vehiculo,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        flash("Vehículo eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"Error al eliminar: {e}", "danger")
+    return redirect(url_for('lista_vehiculos_admin'))
+
+
 # -------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
